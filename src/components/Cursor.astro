@@ -1,0 +1,26 @@
+<div class="cursor" aria-hidden="true">
+  <span></span>
+</div>
+
+<script>
+  const cursor = document.querySelector<HTMLElement>('.cursor');
+
+  if (cursor && window.matchMedia('(pointer: fine)').matches) {
+    const interactiveSelector = 'a, button, [data-cursor="interactive"]';
+
+    window.addEventListener('pointermove', (event) => {
+      cursor.style.setProperty('--cursor-x', `${event.clientX}px`);
+      cursor.style.setProperty('--cursor-y', `${event.clientY}px`);
+      cursor.dataset.visible = 'true';
+    });
+
+    document.addEventListener('pointerover', (event) => {
+      const target = event.target as Element | null;
+      cursor.dataset.active = target?.closest(interactiveSelector) ? 'true' : 'false';
+    });
+
+    document.addEventListener('pointerleave', () => {
+      cursor.dataset.visible = 'false';
+    });
+  }
+</script>

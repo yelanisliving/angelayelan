@@ -1,0 +1,23 @@
+{
+  "name": "angelayelan-portfolio",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.9.0",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build && prettier --ignore-path .prettierignore --write \"dist/**/*.html\"",
+    "preview": "astro preview",
+    "check": "astro check",
+    "format:html": "prettier --ignore-path .prettierignore --write \"dist/**/*.html\""
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "astro": "^5.13.0",
+    "typescript": "^5.9.2"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.6"
+  }
+}

@@ -1,0 +1,303 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getYouTubeId, photos, videos } from '../data/videos';
+
+const preparedVideos = videos.map((video, index) => ({
+  ...video,
+  embedId: getYouTubeId(video.youtubeId),
+  anchor: `video-${String(index + 1).padStart(2, '0')}`,
+  number: String(index + 1).padStart(2, '0'),
+}));
+
+const sliderGroups = [false, true];
+---
+
+<BaseLayout
+  title="Exhibit"
+  description="Film, photography, and writing by Angela Yelan."
+>
+  <section
+    class="projector-stage projector-stage--reel"
+    data-projector="off"
+    aria-labelledby="exhibit-page-title"
+  >
+    <div class="projector-stage__glow" aria-hidden="true"></div>
+    <div class="projector-stage__beam" aria-hidden="true"></div>
+
+    <div class="projector-machine" aria-hidden="true">
+      <span class="projector-machine__stem"></span>
+      <div class="projector-machine__body">
+        <span class="projector-machine__reel projector-machine__reel--left"></span>
+        <span class="projector-machine__reel projector-machine__reel--right"></span>
+        <span class="projector-machine__lens"></span>
+      </div>
+    </div>
+
+    <button
+      class="projector-pull"
+      type="button"
+      aria-pressed="false"
+      aria-label="Turn the video projector on"
+      data-cursor="interactive"
+    >
+      <span class="projector-pull__cord" aria-hidden="true"></span>
+      <span class="projector-pull__handle" aria-hidden="true"></span>
+      <span class="projector-pull__label">click to project</span>
+    </button>
+
+    <header class="media-page__intro">
+      <h1 id="exhibit-page-title">Exhibit</h1>
+      <p class="lede">expressing my thoughts and creativity.</p>
+    </header>
+
+    <div class="projector-slider" aria-hidden="true">
+      <div class="projector-slider__track">
+        {
+          sliderGroups.map((isDuplicate) => (
+            <div class="projector-slider__group" aria-hidden={isDuplicate ? 'true' : undefined}>
+              {preparedVideos.map((video) => (
+                <a
+                  class="projector-slide"
+                  href={`/films#${video.anchor}`}
+                  aria-label={isDuplicate ? undefined : `View ${video.title} in the complete film archive`}
+                  tabindex="-1"
+                >
+                  <div class="projector-slide__image">
+                    {video.embedId ? (
+                      <img
+                        src={`https://i.ytimg.com/vi/${video.embedId}/maxresdefault.jpg`}
+                        data-thumbnail-fallback={`https://i.ytimg.com/vi/${video.embedId}/mqdefault.jpg`}
+                        alt=""
+                        loading="lazy"
+                      />
+                    ) : (
+                      <span>{video.number}</span>
+                    )}
+                    <span class="projector-slide__play" aria-hidden="true">▶</span>
+                  </div>
+                  <div class="projector-slide__caption">
+                    <span>{video.number}</span>
+                    <p>{video.note}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <a
+      class="projector-stage__films-link"
+      href="/films"
+      aria-hidden="true"
+      tabindex="-1"
+    >see films <span aria-hidden="true">→</span></a>
+
+    <p class="visually-hidden projector-stage__status" aria-live="polite">
+      Video projector is on.
+    </p>
+  </section>
+
+  <section
+    class="photo-project exhibit-section"
+    id="image-stills"
+    aria-labelledby="photo-project-title"
+    hidden
+  >
+    <div class="photo-project__heading">
+      <p class="eyebrow">Photography</p>
+      <h2 id="photo-project-title">Image stills</h2>
+      <p>
+        A series of cinematic image stills. Theme: “A thing isn't beautiful because it lasts” —
+        Vision from <em>Avengers</em>
+      </p>
+    </div>
+
+    <div class="photo-grid">
+      {
+        photos.map((photo) => (
+          <button
+            class="photo-slot"
+            type="button"
+            data-photo-src={photo.src}
+            data-photo-alt={photo.alt}
+            aria-label={`View larger: ${photo.alt}`}
+          >
+            <img src={photo.src} alt={photo.alt} loading="lazy" />
+          </button>
+        ))
+      }
+    </div>
+  </section>
+
+  <section
+    class="writing-projects exhibit-section"
+    id="writing"
+    aria-labelledby="writing-title"
+    hidden
+  >
+    <div class="writing-projects__heading">
+      <p class="eyebrow">Writing</p>
+      <h2 id="writing-title">Creative Writing</h2>
+      <p class="writing-projects__note">
+        My favorite piece of writing is “A Love for Life” in my poetry chapbook “Grow As We Go :)”
+      </p>
+    </div>
+
+    <div class="writing-projects__grid">
+      <article class="writing-project">
+        <a
+          class="writing-project__cover"
+          href="/writing/grow-as-we-go.pdf"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Read Grow As We Go poetry chapbook as a PDF"
+        >
+          <img
+            src="/writing/grow-as-we-go-cover.png"
+            alt="Illustrated flower cover of Grow As We Go"
+            loading="lazy"
+          />
+        </a>
+        <div class="writing-project__details">
+          <p>Poetry chapbook</p>
+          <h3>Grow As We Go</h3>
+          <a href="/writing/grow-as-we-go.pdf" target="_blank" rel="noreferrer">Read PDF <span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+
+      <article class="writing-project">
+        <a
+          class="writing-project__cover"
+          href="/writing/from-this-place-me.pdf"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Read From This Place, Me writing portfolio as a PDF"
+        >
+          <img
+            src="/writing/from-this-place-me-cover.png"
+            alt="Minimal botanical cover of From This Place, Me"
+            loading="lazy"
+          />
+        </a>
+        <div class="writing-project__details">
+          <p>Writing portfolio</p>
+          <h3>From This Place, Me.</h3>
+          <a href="/writing/from-this-place-me.pdf" target="_blank" rel="noreferrer">Read PDF <span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <dialog class="photo-lightbox" aria-label="Enlarged photograph">
+    <div class="photo-lightbox__content">
+      <button class="photo-lightbox__close" type="button" aria-label="Close enlarged photograph">
+        Close
+      </button>
+      <img class="photo-lightbox__image" alt="" />
+    </div>
+  </dialog>
+</BaseLayout>
+
+<script>
+  const projectorStage = document.querySelector<HTMLElement>('.projector-stage');
+  const projectorPull = document.querySelector<HTMLButtonElement>('.projector-pull');
+  const projectorSlider = document.querySelector<HTMLElement>('.projector-slider');
+  const filmsLink = document.querySelector<HTMLAnchorElement>('.projector-stage__films-link');
+  const projectorStatus = document.querySelector<HTMLElement>('.projector-stage__status');
+  const projectorLabel = document.querySelector<HTMLElement>('.projector-pull__label');
+  const exhibitSections = document.querySelectorAll<HTMLElement>('.exhibit-section');
+  const reelThumbnails = document.querySelectorAll<HTMLImageElement>('[data-thumbnail-fallback]');
+  const primarySlides = document.querySelectorAll<HTMLAnchorElement>(
+    '.projector-slider__group:not([aria-hidden="true"]) .projector-slide',
+  );
+
+  reelThumbnails.forEach((thumbnail) => {
+    thumbnail.addEventListener(
+      'error',
+      () => {
+        const fallback = thumbnail.dataset.thumbnailFallback;
+        if (fallback && thumbnail.src !== fallback) thumbnail.src = fallback;
+      },
+      { once: true },
+    );
+  });
+
+  const setProjectorState = (isOn: boolean) => {
+    if (!projectorStage || !projectorPull || !projectorSlider) return;
+
+    projectorStage.dataset.projector = isOn ? 'on' : 'off';
+    projectorPull.setAttribute('aria-pressed', String(isOn));
+    projectorPull.setAttribute(
+      'aria-label',
+      isOn ? 'Turn the video projector off' : 'Turn the video projector on',
+    );
+    projectorSlider.setAttribute('aria-hidden', String(!isOn));
+    if (filmsLink) {
+      filmsLink.setAttribute('aria-hidden', String(!isOn));
+      filmsLink.tabIndex = isOn ? 0 : -1;
+    }
+    primarySlides.forEach((slide) => {
+      slide.tabIndex = isOn ? 0 : -1;
+    });
+    exhibitSections.forEach((section) => {
+      section.hidden = !isOn;
+    });
+
+    if (projectorLabel) projectorLabel.textContent = isOn ? 'click to dim' : 'click to project';
+    if (projectorStatus) {
+      projectorStatus.textContent = `Video projector is ${isOn ? 'on' : 'off'}.`;
+    }
+  };
+
+  if (projectorStage && projectorPull && projectorSlider) {
+    setProjectorState(false);
+
+    projectorPull.addEventListener('click', () => {
+      const isTurningOn = projectorStage.dataset.projector !== 'on';
+      projectorPull.classList.add('is-pulling');
+      setProjectorState(isTurningOn);
+    });
+
+    projectorPull.addEventListener('animationend', () => {
+      projectorPull.classList.remove('is-pulling');
+    });
+  }
+
+  const lightbox = document.querySelector<HTMLDialogElement>('.photo-lightbox');
+  const lightboxImage = document.querySelector<HTMLImageElement>('.photo-lightbox__image');
+  const closeButton = document.querySelector<HTMLButtonElement>('.photo-lightbox__close');
+  const customCursor = document.querySelector<HTMLElement>('.cursor');
+  const photoButtons = document.querySelectorAll<HTMLButtonElement>('[data-photo-src]');
+  let lastPhotoButton: HTMLButtonElement | null = null;
+
+  if (lightbox && lightboxImage && closeButton) {
+    photoButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const source = button.dataset.photoSrc;
+
+        if (!source) return;
+
+        lastPhotoButton = button;
+        lightboxImage.src = source;
+        lightboxImage.alt = button.dataset.photoAlt ?? '';
+        lightbox.showModal();
+        if (customCursor) lightbox.append(customCursor);
+      });
+    });
+
+    closeButton.addEventListener('click', () => lightbox.close());
+
+    lightbox.addEventListener('click', (event) => {
+      if (event.target === lightbox) lightbox.close();
+    });
+
+    lightbox.addEventListener('close', () => {
+      lightboxImage.removeAttribute('src');
+      lightboxImage.alt = '';
+      if (customCursor) document.body.prepend(customCursor);
+      lastPhotoButton?.focus();
+    });
+  }
+</script>

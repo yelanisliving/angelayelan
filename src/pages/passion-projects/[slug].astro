@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BirdieCaseStudy from '../../components/BirdieCaseStudy.astro';
+import ColorGradingCaseStudy from '../../components/ColorGradingCaseStudy.astro';
+import SortingHatCaseStudy from '../../components/SortingHatCaseStudy.astro';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+
+  return projects.map((project) => ({
+    params: { slug: project.id.replace(/\.md$/, '') },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const projectSlug = project.id.replace(/\.md$/, '');
+---
+
+<BaseLayout title={project.data.title} description={project.data.description}>
+  {
+    projectSlug === 'technical-project-01' ? (
+      <SortingHatCaseStudy data={project.data}>
+        <Content />
+      </SortingHatCaseStudy>
+    ) : projectSlug === 'technical-project-02' ? (
+      <ColorGradingCaseStudy data={project.data}>
+        <Content />
+      </ColorGradingCaseStudy>
+    ) : projectSlug === 'technical-project-03' ? (
+      <BirdieCaseStudy data={project.data}>
+        <Content />
+      </BirdieCaseStudy>
+    ) : (
+      <article class="case-study">
+        <header class="case-study__header">
+          <p class="eyebrow">Technical project · {project.data.status.replace('-', ' ')}</p>
+          <h1>{project.data.title}</h1>
+          <p class="lede">{project.data.description}</p>
+        </header>
+
+        <div class="case-study__canvas" aria-label="Space for project media">
+          <span>Project image / video</span>
+        </div>
+
+        <div class="case-study__content">
+          <Content />
+        </div>
+
+        <a class="text-link" href="/#projects">← Back to featured projects</a>
+      </article>
+    )
+  }
+</BaseLayout>

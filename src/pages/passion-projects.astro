@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => a.data.date.getTime() - b.data.date.getTime(),
+);
+const getProjectSlug = (id: string) => id.replace(/\.md$/, '');
+---
+
+<BaseLayout
+  title="Passion projects"
+  description="Experiments, works in progress, and passion projects by Angela Yelan."
+>
+  <section class="page-intro page-intro--wide" aria-labelledby="projects-title">
+    <p class="eyebrow">Selected work</p>
+    <h1 id="projects-title">Passion projects.</h1>
+    <p class="lede">
+      A home for experiments, obsessions, and things made for the joy of making them.
+    </p>
+    <div class="project-list project-list--page">
+      {
+        projects.map((project, index) => (
+          <ProjectCard
+            href={`/passion-projects/${getProjectSlug(project.id)}`}
+            index={String(index + 1).padStart(2, '0')}
+            title={project.data.title}
+            description={project.data.description}
+            status="Technical project"
+          />
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

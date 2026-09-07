@@ -1,0 +1,98 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import projectImage from '../../photography/two.png';
+
+interface Props {
+  data: CollectionEntry<'projects'>['data'];
+}
+
+const { data } = Astro.props;
+const findings = [
+  { value: '0.7729', label: 'C-WGAN SSIM' },
+  { value: '25.922', label: 'C-WGAN PSNR' },
+  { value: '0.44 s', label: 'Average inference time' },
+];
+---
+
+<article class="color-study">
+  <header class="color-study__hero">
+    <p class="eyebrow">Generative AI · Computer vision · Cinematic media</p>
+    <h1>{data.title}</h1>
+    <p class="color-study__lede">{data.description}</p>
+  </header>
+
+  <figure class="color-study__hero-image">
+    <img
+      src={projectImage.src}
+      alt="Research poster presenting the generative AI cinematic color-grading project"
+    />
+  </figure>
+
+  <section class="color-study__story" aria-labelledby="color-study-story">
+    <p class="eyebrow">The research</p>
+    <div class="color-study__prose" id="color-study-story">
+      <slot />
+    </div>
+  </section>
+
+  <section class="color-study__findings" aria-labelledby="color-study-findings">
+    <div>
+      <h2 id="color-study-findings">Selected Results</h2>
+    </div>
+    <dl>
+      {findings.map((finding) => (
+        <div>
+          <dt>{finding.value}</dt>
+          <dd>{finding.label}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+
+  <section class="color-study__documents" aria-labelledby="color-study-documents">
+    <div class="color-study__section-heading">
+      <p class="eyebrow">Project archive</p>
+      <h2 id="color-study-documents">The paper and the process behind it.</h2>
+    </div>
+
+    <div class="color-study__document-grid">
+      <article class="color-study__document">
+        <header>
+          <span>01 · Research paper</span>
+          <h3>A Comparative Analysis of Two Generative Models for Cinematic Color Grading</h3>
+          <p>Formal paper · 11 pages</p>
+        </header>
+        {data.researchPaperUrl ? (
+          <iframe
+            src={`${data.researchPaperUrl}#view=FitH&toolbar=1`}
+            title="Research paper: A Comparative Analysis of Two Generative Models for Cinematic Color Grading"
+            loading="lazy"
+          ></iframe>
+          <a href={data.researchPaperUrl} target="_blank" rel="noreferrer">Open research paper ↗</a>
+        ) : (
+          <div class="color-study__document-placeholder">Research paper PDF</div>
+        )}
+      </article>
+
+      <article class="color-study__document">
+        <header>
+          <span>02 · Working notes</span>
+          <h3>Model diagrams, training ideas, and project notes</h3>
+          <p>Handwritten process notebook · 3 pages</p>
+        </header>
+        {data.projectNotesUrl ? (
+          <iframe
+            src={`${data.projectNotesUrl}#view=FitH&toolbar=1`}
+            title="Project notes for the cinematic color-grading research"
+            loading="lazy"
+          ></iframe>
+          <a href={data.projectNotesUrl} target="_blank" rel="noreferrer">Open project notes ↗</a>
+        ) : (
+          <div class="color-study__document-placeholder">Project notes PDF</div>
+        )}
+      </article>
+    </div>
+  </section>
+
+  <a class="text-link" href="/#projects">← Back to featured projects</a>
+</article>

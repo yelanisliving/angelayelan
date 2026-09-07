@@ -1,0 +1,131 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import hatPhoto from '../../photography/one.png';
+
+interface Props {
+  data: CollectionEntry<'projects'>['data'];
+}
+
+const { data } = Astro.props;
+const voicePipeline = [
+  { step: '01', title: 'Listen', tool: 'Whisper.cpp', detail: 'Transcribes the wearer’s voice locally.' },
+  { step: '02', title: 'Reason', tool: 'Llama.cpp', detail: 'Interprets responses and generates the conversation.' },
+  { step: '03', title: 'Speak', tool: 'Piper', detail: 'Returns the hat’s answer through offline text-to-speech.' },
+  { step: '04', title: 'Perform', tool: 'Physical system', detail: 'Turns the model output into a tangible character interaction.' },
+];
+---
+
+<article class="sorting-study">
+  <header class="sorting-study__hero">
+    <div class="sorting-study__hero-copy">
+      <p class="eyebrow">Physical computing · Edge AI · 2024–present</p>
+      <h1>{data.title}</h1>
+      <p class="sorting-study__lede">{data.description}</p>
+    </div>
+
+  </header>
+
+  <figure class="sorting-study__cover">
+    <img src={hatPhoto.src} alt="Handmade voice-interactive Hogwarts Sorting Hat" />
+    <figcaption>A handmade physical interface for a private, fully offline voice experience.</figcaption>
+  </figure>
+
+  <section class="sorting-study__intro" aria-labelledby="sorting-story-title">
+    <aside class="sorting-study__intro-rail" aria-label="Project resources">
+      <p class="eyebrow">The project</p>
+      <div class="sorting-study__resource-embeds">
+        {data.articleUrl ? (
+          <a
+            class="sorting-study__resource-embed sorting-study__resource-embed--article"
+            href={data.articleUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <div class="sorting-study__resource-image">
+              <img src={hatPhoto.src} alt="The handmade Hogwarts Sorting Hat" loading="lazy" />
+            </div>
+            <div class="sorting-study__resource-copy">
+              <span>Instructables article</span>
+              <strong>Original Sorting Hat build</strong>
+              <p>Read the complete construction process, code, and fabrication tutorial.</p>
+              <small>View article ↗</small>
+            </div>
+          </a>
+        ) : (
+          <div class="sorting-study__resource-embed sorting-study__resource-embed--pending">
+            <span>Instructables article</span>
+            <strong>Original Instructables build</strong>
+            <small>Article link to be added.</small>
+          </div>
+        )}
+
+      </div>
+    </aside>
+    <div class="sorting-study__prose" id="sorting-story-title">
+      <slot />
+    </div>
+  </section>
+
+  <section class="sorting-study__notebook" aria-labelledby="engineering-notebook-title">
+    <div class="sorting-study__section-heading">
+      <p class="eyebrow">Project documentation</p>
+      <h2 id="engineering-notebook-title">Engineering notebook</h2>
+    </div>
+
+    {data.notebookUrl ? (
+      <div class="sorting-study__notebook-viewer">
+        <iframe
+          src={`${data.notebookUrl}#toolbar=0&navpanes=0`}
+          title="Sorting Hat engineering notebook PDF"
+        ></iframe>
+        <a href={data.notebookUrl} target="_blank" rel="noreferrer">Open full notebook ↗</a>
+      </div>
+    ) : (
+      <div class="sorting-study__notebook-placeholder" aria-label="Engineering notebook PDF placeholder">
+        <span>PDF</span>
+        <p>Add the notebook file to embed its pages here.</p>
+      </div>
+    )}
+  </section>
+
+  <section class="sorting-study__pipeline" aria-labelledby="voice-pipeline-title">
+    <div class="sorting-study__section-heading">
+      <h2 id="voice-pipeline-title">Current System</h2>
+    </div>
+    <ol>
+      {voicePipeline.map((item) => (
+        <li>
+          <span>{item.step}</span>
+          <div>
+            <p>{item.title}</p>
+            <strong>{item.tool}</strong>
+            <small>{item.detail}</small>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="sorting-study__demo" aria-labelledby="demo-title">
+    <div class="sorting-study__section-heading">
+      <p class="eyebrow">Watch</p>
+      <h2 id="demo-title">See the Sorting Hat in action.</h2>
+    </div>
+    {data.youtubeId ? (
+      <iframe
+        src={`https://www.youtube-nocookie.com/embed/${data.youtubeId}`}
+        title="Voice-Interactive Hogwarts Sorting Hat demonstration"
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      />
+    ) : (
+      <div class="sorting-study__demo-placeholder">
+        <span>YouTube demo</span>
+        <p>Add the video ID to this project’s Markdown frontmatter to place the demo here.</p>
+      </div>
+    )}
+  </section>
+
+  <a class="text-link" href="/#projects">← Back to featured projects</a>
+</article>

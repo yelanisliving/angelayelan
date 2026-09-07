@@ -1,0 +1,107 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  data: CollectionEntry<'projects'>['data'];
+}
+
+const { data } = Astro.props;
+const systemSteps = [
+  { step: '01', title: 'Capture', detail: 'Record a player’s movement through the mobile camera.' },
+  { step: '02', title: 'Map', detail: 'Use pose landmarks and joint angles to describe badminton form.' },
+  { step: '03', title: 'Classify', detail: 'Evaluate form with computer-vision and machine-learning models.' },
+  { step: '04', title: 'Guide', detail: 'Turn model output into approachable feedback for newer players.' },
+];
+---
+
+<article class="birdie-study">
+  <header class="birdie-study__hero">
+    <p class="eyebrow">Machine learning · Computer vision · Mobile app</p>
+    <h1>{data.title}</h1>
+    <p class="birdie-study__lede">{data.description}</p>
+  </header>
+
+  <section class="birdie-study__showcase" aria-label="BIRDIE mobile app home screen">
+    <div class="birdie-study__showcase-copy">
+      <span>Current prototype</span>
+      <strong>Form analysis designed for beginners!</strong>
+      <p>
+        BIRDIE helps players review their stance when practicing their badminton form.
+      </p>
+    </div>
+    {data.appScreenUrl ? (
+      <figure>
+        <img src={data.appScreenUrl} alt="BIRDIE badminton form-analysis app home screen" />
+      </figure>
+    ) : (
+      <div class="birdie-study__screen-placeholder">App screen</div>
+    )}
+  </section>
+
+  <section class="birdie-study__story" aria-labelledby="birdie-story">
+    <p class="eyebrow">The project</p>
+    <div class="birdie-study__prose" id="birdie-story">
+      <slot />
+    </div>
+  </section>
+
+  <section class="birdie-study__system" aria-labelledby="birdie-system">
+    <div class="birdie-study__section-heading">
+      <h2 id="birdie-system">Form-detection Loop</h2>
+    </div>
+    <ol>
+      {systemSteps.map((item) => (
+        <li>
+          <span>{item.step}</span>
+          <strong>{item.title}</strong>
+          <p>{item.detail}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="birdie-study__documentation" aria-labelledby="birdie-documentation">
+    <div class="birdie-study__section-heading">
+      <p class="eyebrow">Development archive</p>
+      <h2 id="birdie-documentation">Project Notes</h2>
+      <p class="birdie-study__archive-note">
+        Pose tracking, angle calculations, building the dataset, CNN training, app integration, and crashouts&nbsp;:p
+      </p>
+    </div>
+
+    {data.appDocumentationUrl ? (
+      <div class="birdie-study__document">
+        <iframe
+          src={`${data.appDocumentationUrl}#view=FitH&toolbar=1`}
+          title="BIRDIE app research and development documentation"
+          loading="lazy"
+        ></iframe>
+        <a href={data.appDocumentationUrl} target="_blank" rel="noreferrer">Open full documentation ↗</a>
+      </div>
+    ) : (
+      <div class="birdie-study__document-placeholder">App documentation PDF</div>
+    )}
+  </section>
+
+  <section class="birdie-study__demo" aria-labelledby="birdie-demo">
+    <div class="birdie-study__section-heading">
+      <p class="eyebrow" id="birdie-demo">Prototype demo</p>
+    </div>
+    {data.youtubeId ? (
+      <iframe
+        src={`https://www.youtube-nocookie.com/embed/${data.youtubeId}`}
+        title="BIRDIE badminton form-analysis demonstration"
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
+    ) : (
+      <div class="birdie-study__demo-placeholder">
+        <span>YouTube demo</span>
+        <p>Add the video ID to this project’s Markdown frontmatter to place the demo here.</p>
+      </div>
+    )}
+  </section>
+
+  <a class="text-link" href="/#projects">← Back to featured projects</a>
+</article>

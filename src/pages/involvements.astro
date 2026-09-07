@@ -1,0 +1,294 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import involvementPhotos from '../../photography/involvements.png';
+
+// Edit these entries to change the floating words and their pop-up descriptions.
+const involvements = [
+  {
+    word: 'national badminton',
+    eyebrow: 'National Badminton',
+    description: `I won't be the same without badminton! I'm an athlete, coach, and certified umpire in USA Badminton :)
+
+• 2-time national & 1-time international Pan-American champion
+• currently coaching the beginner class at SFT Badminton
+• i've been playing for 11 years! badminton taught me that i don't need to prove my worth to anyone. it taught me to not pursue anything just for the face, and my mentality is forever changed.`,
+    image: '/involvements/national-badminton.png',
+    imagePosition: 'left top',
+    imageAlt: 'A large badminton community gathered together',
+    x: '16%',
+    y: '22%',
+    delay: '-1.2s',
+    glow: 'rgb(151 167 126 / 68%)',
+  },
+  {
+    word: 'irvington FRAME',
+    eyebrow: 'irvington frame',
+    description: `I founded Irvington FRAME (Film, Recording, and Media Editing), my high school's first film, videography, and cinematography club!
+
+• started an alumni documentary initiative to highlight unique careers of Irvington's past graduates
+• collaborated with 18 clubs & organizations, recapping their events
+• organized and publicized fremont's first film festival!`,
+    image: '/involvements/irvington-frame.png',
+    imagePosition: 'right top',
+    imageAlt: 'Angela standing with a group of classmates',
+    x: '50%',
+    y: '22%',
+    delay: '-3.4s',
+    glow: 'rgb(204 113 83 / 62%)',
+  },
+  {
+    word: 'the sf bubble',
+    eyebrow: 'the sf bubble',
+    description: `Currently the outreach lead for "The SF Bubble," a long-term documentary highlighing the startup era in San Francisco 🏙️
+    
+    started july 2026
+    in progress :)`,
+    image: '',
+    imagePosition: 'left bottom',
+    imageAlt: 'Angela and other students gathered at school',
+    x: '84%',
+    y: '22%',
+    delay: '-2.1s',
+    glow: 'rgb(211 165 83 / 66%)',
+  },
+  {
+    word: 'cs kickstart',
+    eyebrow: 'CS Kickstart',
+    description: `Participated in a one-week summer program for incoming women and nonbinary freshmen interested in computer science!
+
+• met the most amazing girls ever ☺️
+• a great start to my freshman year at berkeley!`,
+    image: '/involvements/cs-kickstart.png',
+    imagePosition: 'center',
+    imageAlt: 'Photo from CS Kickstart',
+    x: '16%',
+    y: '50%',
+    delay: '-7.2s',
+    glow: 'rgb(170 146 184 / 64%)',
+  },
+  {
+    word: 'vikinghacks',
+    eyebrow: 'vikinghacks',
+    description: `Hosted VikingHacks with 120+ participants @ Irvington High School 👾
+
+• peep the amazing organizating team on the top left :)
+• led the marketing team and operations team, posting social media campaigns and structuring room layouts/judging process`,
+    image: '/involvements/vikinghacks.png',
+    imagePosition: 'center',
+    imageAlt: 'Photo from VikingHacks',
+    x: '50%',
+    y: '50%',
+    delay: '-8.4s',
+    glow: 'rgb(173 172 176 / 90%)',
+  },
+  {
+    word: 'piano',
+    eyebrow: 'piano',
+    description: `I have been playing piano for 12 years now; I used to play "competitively," but now I play for fun 🎹
+• received the ARSM Young Artist Performance Diploma and ABRSM Level 8
+
+current repertoire:
+• After You've Gone - Turner Layton (Arranged by Jimin Park)
+• A Lovely Night - Justin Hurwitz (Arranged by Birru)
+• "Chopin’s "Black Key" Étude (Op. 10, No. 5)
+• Piano Sonata K. 283 - Mozart
+• Music at Sunset - Yinghai Li
+
+videos of my pieces coming soon! :)`,
+    image: '',
+    imagePosition: 'center',
+    imageAlt: '',
+    x: '84%',
+    y: '50%',
+    delay: '-9.1s',
+    glow: 'rgb(157 121 94 / 58%)',
+  },
+  {
+    word: 'school badminton',
+    eyebrow: 'irvington badminton',
+    description: `It might seem the same, but national and school badminton are VERY different!
+
+• helped my school peers improve their skills and technique during practices
+• 1-time NCS champion and 1-time CIF champion
+• i will NEVER forget my senior night. eternally loved 💌`,
+    image: '/involvements/school-badminton.png',
+    imagePosition: 'right bottom',
+    imageAlt: 'Angela and her badminton teammates holding their medals',
+    x: '16%',
+    y: '79%',
+    delay: '-4.6s',
+    glow: 'rgb(77 98 130 / 62%)',
+  },
+  {
+    word: 'summer programs',
+    eyebrow: 'summer programs',
+    description: `UCLA COSMOS (2025) and UCSC Summer Internship Program (2024)
+
+UCLA COSMOS:
+• studied under Professors Achuta Kadambi and Abeer Alwan, conducted case studies on signal processing and computer vision
+
+UCSC SIP:
+• conducted research under Professor Saeed Kargar on generative adversarial networks (GANs) and their practical applications`,
+    image: '/involvements/summer-programs.png',
+    imagePosition: 'left top',
+    imageAlt: 'A group gathered together during a summer program',
+    x: '50%',
+    y: '79%',
+    delay: '-5.3s',
+    glow: 'rgb(138 157 177 / 70%)',
+  },
+  {
+    word: 'movies',
+    eyebrow: 'movies',
+    description: `Took a trip to Los Angeles last year and experienced HOLLYWOOD.
+
+• toured Warner Bros. Studios and Academy Museum of Motion Pictures
+• it's sunnier in los angeles, or as i like to call it, the city of stars.`,
+    image: '/involvements/hollywood.png',
+    imagePosition: 'right top',
+    imageAlt: 'Angela with a group of peers',
+    x: '84%',
+    y: '79%',
+    delay: '-6.1s',
+    glow: 'rgb(226 197 104 / 68%)',
+  },
+];
+---
+
+<BaseLayout
+  title="Involvements & Activities"
+  description="A floating archive of the communities and activities that shape Angela Yelan."
+>
+  <article class="involvements-page" aria-labelledby="involvements-title">
+    <header class="involvements-page__header">
+      <p class="eyebrow">Beyond projects</p>
+      <h1 id="involvements-title">Involvements &amp; Activities</h1>
+      <p>click on the floating words!</p>
+    </header>
+
+    <section class="floating-word-bank" aria-label="Involvements and activities word bank">
+      {
+        involvements.map((item) => (
+          <div
+            class="floating-word"
+            style={`--word-x: ${item.x}; --word-y: ${item.y}; --word-delay: ${item.delay}; --word-glow: ${item.glow};`}
+          >
+            <button
+              type="button"
+              data-involvement-trigger
+              data-title={item.word}
+              data-eyebrow={item.eyebrow}
+              data-description={item.description}
+              data-image={item.image}
+              data-image-position={item.imagePosition}
+              data-image-alt={item.imageAlt}
+              aria-label={`Open ${item.word}`}
+            >
+              {item.word}
+            </button>
+          </div>
+        ))
+      }
+    </section>
+  </article>
+
+  <dialog class="involvement-dialog" aria-labelledby="involvement-dialog-eyebrow">
+    <div class="involvement-dialog__panel">
+      <figure class="involvement-dialog__photo">
+        <img data-fallback-src={involvementPhotos.src} alt="" />
+      </figure>
+
+      <div class="involvement-dialog__copy">
+        <button class="involvement-dialog__close" type="button" aria-label="Close involvement story">
+          Close
+        </button>
+        <p id="involvement-dialog-eyebrow" class="eyebrow" data-dialog-eyebrow></p>
+        <p data-dialog-description></p>
+      </div>
+    </div>
+  </dialog>
+</BaseLayout>
+
+<script>
+  const involvementDialog = document.querySelector<HTMLDialogElement>('.involvement-dialog');
+  const dialogPhoto = document.querySelector<HTMLElement>('.involvement-dialog__photo');
+  const dialogImage = document.querySelector<HTMLImageElement>('.involvement-dialog__photo img');
+  const dialogEyebrow = document.querySelector<HTMLElement>('[data-dialog-eyebrow]');
+  const dialogDescription = document.querySelector<HTMLElement>('[data-dialog-description]');
+  const dialogClose = document.querySelector<HTMLButtonElement>('.involvement-dialog__close');
+  const customCursor = document.querySelector<HTMLElement>('.cursor');
+  const involvementTriggers = document.querySelectorAll<HTMLButtonElement>('[data-involvement-trigger]');
+  let lastTrigger: HTMLButtonElement | null = null;
+
+  if (
+    involvementDialog &&
+    dialogPhoto &&
+    dialogImage &&
+    dialogEyebrow &&
+    dialogDescription &&
+    dialogClose
+  ) {
+    involvementTriggers.forEach((trigger) => {
+      const imageSource = trigger.dataset.image;
+      if (imageSource) {
+        const preloadedImage = new Image();
+        preloadedImage.src = imageSource;
+      }
+    });
+
+    const revealDialogImage = () => {
+      dialogPhoto.classList.remove('is-loading');
+      dialogPhoto.setAttribute('aria-busy', 'false');
+    };
+
+    involvementTriggers.forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        lastTrigger = trigger;
+        dialogEyebrow.textContent = trigger.dataset.eyebrow ?? '';
+        dialogDescription.textContent = trigger.dataset.description ?? '';
+        const imageSource = trigger.dataset.image;
+        const hasImage = Boolean(imageSource);
+
+        dialogPhoto.hidden = !hasImage;
+        involvementDialog.classList.toggle('involvement-dialog--text-only', !hasImage);
+
+        if (hasImage && imageSource) {
+          dialogPhoto.classList.add('is-loading');
+          dialogPhoto.setAttribute('aria-busy', 'true');
+          dialogImage.alt = trigger.dataset.imageAlt ?? '';
+          dialogImage.style.objectPosition = trigger.dataset.imagePosition ?? 'center';
+          dialogImage.classList.remove('is-fallback');
+          dialogImage.onload = revealDialogImage;
+          dialogImage.onerror = () => {
+            dialogImage.classList.add('is-fallback');
+            dialogImage.onerror = null;
+            dialogImage.onload = revealDialogImage;
+            dialogImage.src = dialogImage.dataset.fallbackSrc ?? '';
+          };
+          dialogImage.src = imageSource;
+          if (dialogImage.complete && dialogImage.naturalWidth > 0) revealDialogImage();
+        } else {
+          dialogPhoto.classList.remove('is-loading');
+          dialogPhoto.setAttribute('aria-busy', 'false');
+          dialogImage.alt = '';
+          dialogImage.onload = null;
+          dialogImage.onerror = null;
+          dialogImage.removeAttribute('src');
+        }
+        involvementDialog.showModal();
+        if (customCursor) involvementDialog.append(customCursor);
+      });
+    });
+
+    dialogClose.addEventListener('click', () => involvementDialog.close());
+
+    involvementDialog.addEventListener('click', (event) => {
+      if (event.target === involvementDialog) involvementDialog.close();
+    });
+
+    involvementDialog.addEventListener('close', () => {
+      if (customCursor) document.body.prepend(customCursor);
+      lastTrigger?.focus();
+    });
+  }
+</script>

@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getYouTubeId, videos } from '../data/videos';
+
+const preparedVideos = videos.map((video) => ({
+  ...video,
+  embedId: getYouTubeId(video.youtubeId),
+}));
+---
+
+<BaseLayout
+  title="Films"
+  description="The complete moving-image archive by Angela Yelan."
+>
+  <header class="media-page__intro archive-page__intro" aria-labelledby="films-page-title">
+    <p class="eyebrow">Complete archive</p>
+    <h1 id="films-page-title">Videos</h1>
+  </header>
+
+  <section class="video-archive" aria-label="Complete video archive">
+    {
+      preparedVideos.map((video, index) => (
+        <article class="media-entry" id={`video-${String(index + 1).padStart(2, '0')}`}>
+          <p>{video.note}</p>
+          {!video.embedId ? (
+            <div class="video-slot" aria-label={`${video.title} embed space`}>
+              <span>{String(index + 1).padStart(2, '0')}</span>
+            </div>
+          ) : (
+            <iframe
+              class="video-slot"
+              src={`https://www.youtube-nocookie.com/embed/${video.embedId}`}
+              title={video.title}
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+            />
+          )}
+        </article>
+      ))
+    }
+  </section>
+
+</BaseLayout>
