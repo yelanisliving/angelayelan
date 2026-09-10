@@ -6,6 +6,32 @@ const preparedVideos = videos.map((video) => ({
   ...video,
   embedId: getYouTubeId(video.youtubeId),
 }));
+
+const getVideoPreview = (embedId: string) => `
+  <style>
+    * { box-sizing: border-box; }
+    html, body, a { width: 100%; height: 100%; margin: 0; }
+    body { overflow: hidden; background: #202022; }
+    a { position: relative; display: grid; place-items: center; }
+    img { width: 100%; height: 100%; object-fit: cover; }
+    span {
+      position: absolute;
+      display: grid;
+      width: 4.5rem;
+      aspect-ratio: 1.45;
+      place-items: center;
+      border-radius: 1rem;
+      color: white;
+      background: #ff0033;
+      font: 1.8rem/1 sans-serif;
+      padding-left: 0.18rem;
+    }
+  </style>
+  <a href="https://www.youtube-nocookie.com/embed/${embedId}?autoplay=1" aria-label="Play video">
+    <img src="https://i.ytimg.com/vi/${embedId}/maxresdefault.jpg" alt="" />
+    <span aria-hidden="true">▶</span>
+  </a>
+`;
 ---
 
 <BaseLayout
@@ -30,6 +56,7 @@ const preparedVideos = videos.map((video) => ({
             <iframe
               class="video-slot"
               src={`https://www.youtube-nocookie.com/embed/${video.embedId}`}
+              srcdoc={getVideoPreview(video.embedId)}
               title={video.title}
               loading="lazy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

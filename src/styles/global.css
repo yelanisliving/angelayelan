@@ -695,7 +695,10 @@ h2 {
 }
 
 .media-entry {
+  display: grid;
   min-width: 0;
+  grid-template-rows: 4.75rem auto;
+  gap: 1rem;
   text-align: center;
 }
 
@@ -722,7 +725,10 @@ h2 {
 }
 
 .media-entry p {
-  margin: 0 0 1.1rem;
+  display: grid;
+  height: 4.75rem;
+  margin: 0;
+  place-items: center;
   color: var(--text);
   font-family: Georgia, "Times New Roman", serif;
   font-size: 0.9rem;
