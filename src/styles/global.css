@@ -1110,6 +1110,15 @@ main:has(> .cinema-page) {
   outline-offset: 0.3rem;
 }
 
+.cinema-page__subtitle {
+  margin: 0;
+  color: var(--muted);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.88rem, 1.4vw, 1rem);
+  line-height: 1.45;
+  text-align: center;
+}
+
 .cinema-player {
   width: min(calc(100% - 4rem), 40rem);
   margin: 0 auto;

@@ -51,12 +51,7 @@ const sliderGroups = [false, true];
     </header>
 
     <nav class="exhibit-nav" aria-label="Explore the exhibit">
-      <button
-        class="exhibit-nav__item"
-        type="button"
-        data-exhibit-target="image-stills"
-        data-cursor="interactive"
-      >
+      <a class="exhibit-nav__item" href="/image-stills" data-cursor="interactive">
         <span class="exhibit-nav__art">
           <img
             src="/images/exhibit-nav/image-stills.png"
@@ -64,7 +59,7 @@ const sliderGroups = [false, true];
           />
         </span>
         <span class="exhibit-nav__label">image stills</span>
-      </button>
+      </a>
 
       <a class="exhibit-nav__item" href="/films" data-cursor="interactive">
         <span class="exhibit-nav__art">
@@ -76,12 +71,7 @@ const sliderGroups = [false, true];
         <span class="exhibit-nav__label">videos</span>
       </a>
 
-      <button
-        class="exhibit-nav__item"
-        type="button"
-        data-exhibit-target="writing"
-        data-cursor="interactive"
-      >
+      <a class="exhibit-nav__item" href="/writing" data-cursor="interactive">
         <span class="exhibit-nav__art">
           <img
             src="/images/exhibit-nav/writing.png"
@@ -89,7 +79,7 @@ const sliderGroups = [false, true];
           />
         </span>
         <span class="exhibit-nav__label">writing</span>
-      </button>
+      </a>
     </nav>
 
     <div class="projector-slider" aria-hidden="true">
@@ -150,9 +140,6 @@ const sliderGroups = [false, true];
   const filmsLink = document.querySelector<HTMLAnchorElement>('.projector-stage__films-link');
   const projectorStatus = document.querySelector<HTMLElement>('.projector-stage__status');
   const projectorLabel = document.querySelector<HTMLElement>('.projector-pull__label');
-  const exhibitDestinationButtons = document.querySelectorAll<HTMLButtonElement>(
-    '[data-exhibit-target]',
-  );
   const reelThumbnails = document.querySelectorAll<HTMLImageElement>('[data-thumbnail-fallback]');
   const primarySlides = document.querySelectorAll<HTMLAnchorElement>(
     '.projector-slider__group:not([aria-hidden="true"]) .projector-slide',
@@ -193,8 +180,19 @@ const sliderGroups = [false, true];
     }
   };
 
+  const cameFromMediaPage = (() => {
+    try {
+      const referrer = new URL(document.referrer);
+      if (referrer.origin !== window.location.origin) return false;
+      const path = referrer.pathname.replace(/\/$/, '');
+      return path === '/image-stills' || path === '/films' || path === '/writing';
+    } catch {
+      return false;
+    }
+  })();
+
   if (projectorStage && projectorPull && projectorSlider) {
-    setProjectorState(false);
+    setProjectorState(cameFromMediaPage);
 
     projectorPull.addEventListener('click', () => {
       const isTurningOn = projectorStage.dataset.projector !== 'on';
@@ -206,10 +204,4 @@ const sliderGroups = [false, true];
       projectorPull.classList.remove('is-pulling');
     });
   }
-
-  exhibitDestinationButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      setProjectorState(true);
-    });
-  });
 </script>

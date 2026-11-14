@@ -94,13 +94,35 @@ const contactLinks = [
   const visitorCountEl = document.querySelector('[data-visitor-count]');
 
   if (visitorCountEl) {
-    fetch('https://abacus.jasoncameron.dev/hit/angelayelan-portfolio/site-visits')
-      .then((response) => response.json())
-      .then((data) => {
-        visitorCountEl.textContent = `you're the ${ordinal(data.value)} visitor :)`;
-      })
-      .catch(() => {
-        // Keep the generic fallback text if the counter is unreachable.
-      });
+    const STORAGE_KEY = 'angelayelan-visit-count-v2';
+    const today = new Date().toDateString();
+
+    let cached: { count: number; day: string } | null = null;
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      cached = raw ? JSON.parse(raw) : null;
+    } catch {
+      // Private browsing or blocked storage: fall through to a fresh count.
+    }
+
+    if (cached && cached.day === today) {
+      // Already counted this visitor today — just show the cached number
+      // instead of hitting the counter again on every refresh.
+      visitorCountEl.textContent = `you're the ${ordinal(cached.count)} visitor :)`;
+    } else {
+      fetch('https://abacus.jasoncameron.dev/hit/angelayelan-portfolio/site-visits-v2')
+        .then((response) => response.json())
+        .then((data) => {
+          visitorCountEl.textContent = `you're the ${ordinal(data.value)} visitor :)`;
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({ count: data.value, day: today }));
+          } catch {
+            // Ignore storage failures — the count still displayed correctly this load.
+          }
+        })
+        .catch(() => {
+          // Keep the generic fallback text if the counter is unreachable.
+        });
+    }
   }
 </script>
