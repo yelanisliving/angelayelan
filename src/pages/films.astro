@@ -7,6 +7,13 @@ const preparedVideos = videos.map((video) => ({
   embedId: getYouTubeId(video.youtubeId),
 }));
 
+const firstVideo = preparedVideos[0];
+const clientVideos = preparedVideos.map(({ title, note, embedId }) => ({
+  title,
+  note,
+  embedId,
+}));
+
 const getVideoPreview = (embedId: string) => `
   <style>
     * { box-sizing: border-box; }
@@ -28,7 +35,11 @@ const getVideoPreview = (embedId: string) => `
     }
   </style>
   <a href="https://www.youtube-nocookie.com/embed/${embedId}?autoplay=1" aria-label="Play video">
-    <img src="https://i.ytimg.com/vi/${embedId}/maxresdefault.jpg" alt="" />
+    <img
+      src="https://i.ytimg.com/vi/${embedId}/maxresdefault.jpg"
+      onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${embedId}/hqdefault.jpg'"
+      alt=""
+    />
     <span aria-hidden="true">▶</span>
   </a>
 `;
@@ -38,34 +49,158 @@ const getVideoPreview = (embedId: string) => `
   title="Films"
   description="The complete moving-image archive by Angela Yelan."
 >
-  <header class="media-page__intro archive-page__intro" aria-labelledby="films-page-title">
-    <p class="eyebrow">Complete archive</p>
-    <h1 id="films-page-title">Videos</h1>
-  </header>
+  <section class="cinema-page" aria-labelledby="films-page-title" data-cinema-carousel>
+    <header class="cinema-page__masthead">
+      <a class="cinema-page__back" href="/exhibit">
+        <span aria-hidden="true">←</span> back
+      </a>
+      <h1 id="films-page-title">videos</h1>
+    </header>
 
-  <section class="video-archive" aria-label="Complete video archive">
-    {
-      preparedVideos.map((video, index) => (
-        <article class="media-entry" id={`video-${String(index + 1).padStart(2, '0')}`}>
-          <p>{video.note}</p>
-          {!video.embedId ? (
-            <div class="video-slot" aria-label={`${video.title} embed space`}>
-              <span>{String(index + 1).padStart(2, '0')}</span>
-            </div>
-          ) : (
-            <iframe
-              class="video-slot"
-              src={`https://www.youtube-nocookie.com/embed/${video.embedId}`}
-              srcdoc={getVideoPreview(video.embedId)}
-              title={video.title}
-              loading="lazy"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowfullscreen
-            />
-          )}
-        </article>
-      ))
-    }
+    <figure class="cinema-player">
+      <div class="cinema-player__stage">
+        <img
+          class="cinema-player__illustration"
+          src="/images/videos/cinema-screen-watercolor-v2.png"
+          alt="A watercolor cinema screen with a small audience"
+        />
+        <iframe
+          class="cinema-player__video"
+          src={`https://www.youtube-nocookie.com/embed/${firstVideo.embedId}`}
+          srcdoc={firstVideo.embedId ? getVideoPreview(firstVideo.embedId) : undefined}
+          title={firstVideo.title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+          data-cinema-video
+        />
+      </div>
+
+      <div class="cinema-controls" aria-label="Video controls">
+        <button class="cinema-control cinema-control--previous" type="button" aria-label="Previous video" data-cinema-previous></button>
+        <button
+          class="cinema-control cinema-control--details"
+          type="button"
+          aria-label="Show video description"
+          aria-expanded="false"
+          aria-controls="cinema-description"
+          data-cinema-details
+        >
+        </button>
+        <button class="cinema-control cinema-control--next" type="button" aria-label="Next video" data-cinema-next></button>
+      </div>
+
+      <figcaption class="cinema-description" id="cinema-description" hidden data-cinema-description>
+        <p data-cinema-note>{firstVideo.note}</p>
+      </figcaption>
+    </figure>
   </section>
 
 </BaseLayout>
+
+<script is:inline define:vars={{ clientVideos }}>
+  const carousel = document.querySelector('[data-cinema-carousel]');
+
+  if (carousel) {
+    const frame = carousel.querySelector('[data-cinema-video]');
+    const previous = carousel.querySelector('[data-cinema-previous]');
+    const next = carousel.querySelector('[data-cinema-next]');
+    const details = carousel.querySelector('[data-cinema-details]');
+    const description = carousel.querySelector('[data-cinema-description]');
+    const note = carousel.querySelector('[data-cinema-note]');
+    let activeIndex = 0;
+
+    const preview = (embedId) => `
+      <style>
+        * { box-sizing: border-box; }
+        html, body, a { width: 100%; height: 100%; margin: 0; }
+        body { overflow: hidden; background: #202022; }
+        a { position: relative; display: grid; place-items: center; }
+        img { width: 100%; height: 100%; object-fit: cover; }
+        span { position: absolute; display: grid; width: 4.5rem; aspect-ratio: 1.45;
+          place-items: center; border-radius: 1rem; color: white; background: #ff0033;
+          font: 1.8rem/1 sans-serif; padding-left: 0.18rem; }
+      </style>
+      <a href="https://www.youtube-nocookie.com/embed/${embedId}?autoplay=1" aria-label="Play video">
+        <img src="https://i.ytimg.com/vi/${embedId}/maxresdefault.jpg"
+          onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${embedId}/hqdefault.jpg'" alt="" />
+        <span aria-hidden="true">▶</span>
+      </a>`;
+
+    const showVideo = (index) => {
+      activeIndex = (index + clientVideos.length) % clientVideos.length;
+      const video = clientVideos[activeIndex];
+
+      if (frame instanceof HTMLIFrameElement && video.embedId) {
+        frame.title = video.title;
+        frame.src = `https://www.youtube-nocookie.com/embed/${video.embedId}`;
+        frame.srcdoc = preview(video.embedId);
+      }
+
+      note.textContent = video.note;
+    };
+
+    // "Reel swap": the frame pulls out of focus like a projectionist
+    // changing film, then racks back into focus on the new title.
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const REEL_SHIFT = 22;
+    const REEL_DURATION = 240;
+    let isSwapping = false;
+
+    const swapTo = (index, direction) => {
+      if (isSwapping) return;
+
+      if (prefersReducedMotion || typeof frame.animate !== 'function') {
+        showVideo(index);
+        return;
+      }
+
+      isSwapping = true;
+      const exitX = direction === 'next' ? -REEL_SHIFT : REEL_SHIFT;
+      const enterX = direction === 'next' ? REEL_SHIFT : -REEL_SHIFT;
+
+      const pullOut = frame.animate(
+        [
+          { transform: 'translateX(-50%) translateX(0px)', filter: 'blur(0px)', opacity: 1 },
+          { transform: `translateX(-50%) translateX(${exitX}px)`, filter: 'blur(7px)', opacity: 0 },
+        ],
+        { duration: REEL_DURATION, easing: 'ease-in' },
+      );
+
+      pullOut.onfinish = () => {
+        showVideo(index);
+
+        const rackIn = frame.animate(
+          [
+            { transform: `translateX(-50%) translateX(${enterX}px)`, filter: 'blur(7px)', opacity: 0 },
+            { transform: 'translateX(-50%) translateX(0px)', filter: 'blur(0px)', opacity: 1 },
+          ],
+          { duration: REEL_DURATION, easing: 'ease-out' },
+        );
+
+        rackIn.onfinish = () => {
+          isSwapping = false;
+        };
+      };
+    };
+
+    previous?.addEventListener('click', () => swapTo(activeIndex - 1, 'previous'));
+    next?.addEventListener('click', () => swapTo(activeIndex + 1, 'next'));
+    details?.addEventListener('click', () => {
+      const willShow = description.hidden;
+      description.hidden = !willShow;
+      details.setAttribute('aria-expanded', String(willShow));
+      details.setAttribute('aria-label', willShow ? 'Hide video description' : 'Show video description');
+    });
+
+    carousel.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        swapTo(activeIndex - 1, 'previous');
+      }
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        swapTo(activeIndex + 1, 'next');
+      }
+    });
+  }
+</script>

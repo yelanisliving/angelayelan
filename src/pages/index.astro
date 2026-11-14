@@ -1,75 +1,73 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import HeroCollage from '../components/HeroCollage.astro';
-import { getCollection } from 'astro:content';
-import sortingHatCover from '../../photography/one.png';
-import colorGradingCover from '../../photography/two.png';
-import birdieCover from '../../photography/three.png';
 
-const tones = ['dark', 'warm', 'blue'];
-const projects = (await getCollection('projects'))
-  .filter((project) => project.data.featured)
-  .sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
-const getProjectSlug = (id: string) => id.replace(/\.md$/, '');
-const projectImageOverrides: Record<string, { src: string; alt: string }> = {
-  'technical-project-01': {
-    src: sortingHatCover.src,
-    alt: 'Handmade voice-interactive Hogwarts Sorting Hat on a dark background',
+const destinations = [
+  {
+    href: '/passion-projects',
+    label: 'Projects',
+    image: '/images/home-nav/projects.png',
+    alt: 'A soft watercolor laptop',
   },
-  'technical-project-02': {
-    src: colorGradingCover.src,
-    alt: 'Poster for the cinematic color-grading research project',
+  {
+    href: '/exhibit',
+    label: 'Exhibit',
+    image: '/images/home-nav/exhibit.png',
+    alt: 'A soft watercolor film clapperboard',
   },
-  'technical-project-03': {
-    src: birdieCover.src,
-    alt: 'BIRDIE badminton form-analysis logo',
+  {
+    href: '/involvements',
+    label: 'affinity',
+    image: '/images/home-nav/life.png',
+    alt: 'A soft watercolor bouquet of flowers',
   },
-};
+  {
+    href: '/about',
+    label: 'About',
+    image: '/images/home-nav/about.png',
+    alt: 'A soft watercolor light bulb',
+  },
+];
 ---
 
-<BaseLayout>
-  <section class="hero" aria-labelledby="home-title">
-    <HeroCollage />
-    <a class="scroll-cue" href="#projects">
-      Explore
-      <span aria-hidden="true">↓</span>
-    </a>
-  </section>
+<BaseLayout
+  title="Angela Yelan"
+  description="Angela Yelan is a student who loves stories and is always trying to live life to the fullest."
+  hideHeader
+  hideFooter={false}
+>
+  <section class="portfolio-intro" aria-labelledby="home-title">
 
-  <section class="home-section home-projects" id="projects" aria-label="Technical projects">
-    <div class="technical-project-grid">
-      {
-        projects.map((project, index) => (
-          <a
-            class={`technical-project-card technical-project-card--${tones[index % tones.length]} ${getProjectSlug(project.id) === 'technical-project-03' ? 'technical-project-card--centered' : ''}`}
-            href={`/passion-projects/${getProjectSlug(project.id)}`}
-          >
-            <div class="technical-project-card__media">
-              {projectImageOverrides[getProjectSlug(project.id)] || project.data.image ? (
-                <img
-                  src={projectImageOverrides[getProjectSlug(project.id)]?.src ?? project.data.image}
-                  alt={projectImageOverrides[getProjectSlug(project.id)]?.alt ?? project.data.imageAlt ?? ''}
-                  loading="lazy"
-                />
-              ) : (
-                <span>Project image {String(index + 1).padStart(2, '0')}</span>
-              )}
-            </div>
-            <div class="technical-project-card__content">
-              <p class="technical-project-card__meta">
-                {project.data.date.toLocaleDateString('en-US', {
-                  month: 'long',
-                  year: 'numeric',
-                  timeZone: 'UTC',
-                })}
-              </p>
-              <h2>{project.data.title}</h2>
-              <p class="technical-project-card__description">{project.data.description}</p>
-            </div>
-          </a>
-        ))
-      }
+    <div class="portfolio-intro__hero">
+      <div class="portfolio-intro__copy">
+        <h1 id="home-title">hi, i'm angela!</h1>
+        <p class="portfolio-intro__lede">
+          a storyphile and soul bound to the human experience
+        </p>
 
+        <nav class="portfolio-intro__destinations" aria-label="Explore Angela's portfolio">
+          {
+            destinations.map(({ href, label, image, alt }, index) => (
+              <a
+                class="portfolio-destination"
+                href={href}
+                style={`--destination-index: ${index}; --destination-tilt: ${index % 2 === 0 ? '-1.5deg' : '1.5deg'};`}
+              >
+                <span class="portfolio-destination__art">
+                  <img src={image} alt={alt} />
+                </span>
+                <span class="portfolio-destination__label">{label}</span>
+              </a>
+            ))
+          }
+        </nav>
+      </div>
+
+      <figure class="portfolio-intro__painting">
+        <img
+          src="/images/crosswalk-haze-wide-v2.png"
+          alt="A hazy watercolor view of people moving through a city crosswalk"
+        />
+      </figure>
     </div>
   </section>
 </BaseLayout>

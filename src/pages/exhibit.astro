@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getYouTubeId, photos, videos } from '../data/videos';
+import { getYouTubeId, videos } from '../data/videos';
 
 const preparedVideos = videos.map((video, index) => ({
   ...video,
@@ -13,7 +13,7 @@ const sliderGroups = [false, true];
 ---
 
 <BaseLayout
-  title="Exhibit"
+  title="exhibit"
   description="Film, photography, and writing by Angela Yelan."
 >
   <section
@@ -26,11 +26,11 @@ const sliderGroups = [false, true];
 
     <div class="projector-machine" aria-hidden="true">
       <span class="projector-machine__stem"></span>
-      <div class="projector-machine__body">
-        <span class="projector-machine__reel projector-machine__reel--left"></span>
-        <span class="projector-machine__reel projector-machine__reel--right"></span>
-        <span class="projector-machine__lens"></span>
-      </div>
+      <img
+        class="projector-machine__illustration"
+        src="/images/exhibit-nav/projector-watercolor.png"
+        alt=""
+      />
     </div>
 
     <button
@@ -46,9 +46,51 @@ const sliderGroups = [false, true];
     </button>
 
     <header class="media-page__intro">
-      <h1 id="exhibit-page-title">Exhibit</h1>
-      <p class="lede">expressing my thoughts and creativity.</p>
+      <h1 id="exhibit-page-title">exhibit</h1>
+      <p class="lede">to express oneself, to channel our creativity</p>
     </header>
+
+    <nav class="exhibit-nav" aria-label="Explore the exhibit">
+      <button
+        class="exhibit-nav__item"
+        type="button"
+        data-exhibit-target="image-stills"
+        data-cursor="interactive"
+      >
+        <span class="exhibit-nav__art">
+          <img
+            src="/images/exhibit-nav/image-stills.png"
+            alt="A soft watercolor stack of photographs"
+          />
+        </span>
+        <span class="exhibit-nav__label">image stills</span>
+      </button>
+
+      <a class="exhibit-nav__item" href="/films" data-cursor="interactive">
+        <span class="exhibit-nav__art">
+          <img
+            src="/images/exhibit-nav/films.png"
+            alt="A soft watercolor handheld camera"
+          />
+        </span>
+        <span class="exhibit-nav__label">videos</span>
+      </a>
+
+      <button
+        class="exhibit-nav__item"
+        type="button"
+        data-exhibit-target="writing"
+        data-cursor="interactive"
+      >
+        <span class="exhibit-nav__art">
+          <img
+            src="/images/exhibit-nav/writing.png"
+            alt="A soft watercolor notebook and pencil"
+          />
+        </span>
+        <span class="exhibit-nav__label">writing</span>
+      </button>
+    </nav>
 
     <div class="projector-slider" aria-hidden="true">
       <div class="projector-slider__track">
@@ -99,105 +141,6 @@ const sliderGroups = [false, true];
     </p>
   </section>
 
-  <section
-    class="photo-project exhibit-section"
-    id="image-stills"
-    aria-labelledby="photo-project-title"
-    hidden
-  >
-    <div class="photo-project__heading">
-      <p class="eyebrow">Photography</p>
-      <h2 id="photo-project-title">Image stills</h2>
-      <p>
-        A series of cinematic image stills. Theme: “A thing isn't beautiful because it lasts” —
-        Vision from <em>Avengers</em>
-      </p>
-    </div>
-
-    <div class="photo-grid">
-      {
-        photos.map((photo) => (
-          <button
-            class="photo-slot"
-            type="button"
-            data-photo-src={photo.src}
-            data-photo-alt={photo.alt}
-            aria-label={`View larger: ${photo.alt}`}
-          >
-            <img src={photo.src} alt={photo.alt} loading="lazy" />
-          </button>
-        ))
-      }
-    </div>
-  </section>
-
-  <section
-    class="writing-projects exhibit-section"
-    id="writing"
-    aria-labelledby="writing-title"
-    hidden
-  >
-    <div class="writing-projects__heading">
-      <p class="eyebrow">Writing</p>
-      <h2 id="writing-title">Creative Writing</h2>
-      <p class="writing-projects__note">
-        My favorite piece of writing is “A Love for Life” in my poetry chapbook “Grow As We Go :)”
-      </p>
-    </div>
-
-    <div class="writing-projects__grid">
-      <article class="writing-project">
-        <a
-          class="writing-project__cover"
-          href="/writing/grow-as-we-go.pdf"
-          target="_blank"
-          rel="noreferrer"
-          aria-label="Read Grow As We Go poetry chapbook as a PDF"
-        >
-          <img
-            src="/writing/grow-as-we-go-cover.png"
-            alt="Illustrated flower cover of Grow As We Go"
-            loading="lazy"
-          />
-        </a>
-        <div class="writing-project__details">
-          <p>Poetry chapbook</p>
-          <h3>Grow As We Go</h3>
-          <a href="/writing/grow-as-we-go.pdf" target="_blank" rel="noreferrer">Read PDF <span aria-hidden="true">→</span></a>
-        </div>
-      </article>
-
-      <article class="writing-project">
-        <a
-          class="writing-project__cover"
-          href="/writing/from-this-place-me.pdf"
-          target="_blank"
-          rel="noreferrer"
-          aria-label="Read From This Place, Me writing portfolio as a PDF"
-        >
-          <img
-            src="/writing/from-this-place-me-cover.png"
-            alt="Minimal botanical cover of From This Place, Me"
-            loading="lazy"
-          />
-        </a>
-        <div class="writing-project__details">
-          <p>Writing portfolio</p>
-          <h3>From This Place, Me.</h3>
-          <a href="/writing/from-this-place-me.pdf" target="_blank" rel="noreferrer">Read PDF <span aria-hidden="true">→</span></a>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <dialog class="photo-lightbox" aria-label="Enlarged photograph">
-    <div class="photo-lightbox__content">
-      <button class="photo-lightbox__close" type="button" aria-label="Close enlarged photograph">
-        Close
-      </button>
-      <img class="photo-lightbox__image" alt="" />
-    </div>
-  </dialog>
 </BaseLayout>
 
 <script>
@@ -207,7 +150,9 @@ const sliderGroups = [false, true];
   const filmsLink = document.querySelector<HTMLAnchorElement>('.projector-stage__films-link');
   const projectorStatus = document.querySelector<HTMLElement>('.projector-stage__status');
   const projectorLabel = document.querySelector<HTMLElement>('.projector-pull__label');
-  const exhibitSections = document.querySelectorAll<HTMLElement>('.exhibit-section');
+  const exhibitDestinationButtons = document.querySelectorAll<HTMLButtonElement>(
+    '[data-exhibit-target]',
+  );
   const reelThumbnails = document.querySelectorAll<HTMLImageElement>('[data-thumbnail-fallback]');
   const primarySlides = document.querySelectorAll<HTMLAnchorElement>(
     '.projector-slider__group:not([aria-hidden="true"]) .projector-slide',
@@ -241,9 +186,6 @@ const sliderGroups = [false, true];
     primarySlides.forEach((slide) => {
       slide.tabIndex = isOn ? 0 : -1;
     });
-    exhibitSections.forEach((section) => {
-      section.hidden = !isOn;
-    });
 
     if (projectorLabel) projectorLabel.textContent = isOn ? 'click to dim' : 'click to project';
     if (projectorStatus) {
@@ -265,39 +207,9 @@ const sliderGroups = [false, true];
     });
   }
 
-  const lightbox = document.querySelector<HTMLDialogElement>('.photo-lightbox');
-  const lightboxImage = document.querySelector<HTMLImageElement>('.photo-lightbox__image');
-  const closeButton = document.querySelector<HTMLButtonElement>('.photo-lightbox__close');
-  const customCursor = document.querySelector<HTMLElement>('.cursor');
-  const photoButtons = document.querySelectorAll<HTMLButtonElement>('[data-photo-src]');
-  let lastPhotoButton: HTMLButtonElement | null = null;
-
-  if (lightbox && lightboxImage && closeButton) {
-    photoButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-        const source = button.dataset.photoSrc;
-
-        if (!source) return;
-
-        lastPhotoButton = button;
-        lightboxImage.src = source;
-        lightboxImage.alt = button.dataset.photoAlt ?? '';
-        lightbox.showModal();
-        if (customCursor) lightbox.append(customCursor);
-      });
+  exhibitDestinationButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      setProjectorState(true);
     });
-
-    closeButton.addEventListener('click', () => lightbox.close());
-
-    lightbox.addEventListener('click', (event) => {
-      if (event.target === lightbox) lightbox.close();
-    });
-
-    lightbox.addEventListener('close', () => {
-      lightboxImage.removeAttribute('src');
-      lightboxImage.alt = '';
-      if (customCursor) document.body.prepend(customCursor);
-      lastPhotoButton?.focus();
-    });
-  }
+  });
 </script>

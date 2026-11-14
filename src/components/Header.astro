@@ -2,25 +2,34 @@
 const pathname = Astro.url.pathname;
 
 const links = [
-  { href: '/', label: 'HOME' },
-  { href: '/#projects', label: 'PROJECTS' },
-  { href: '/exhibit', label: 'EXHIBIT' },
-  { href: '/involvements', label: 'LIFE' },
-  { href: '/about', label: 'ABOUT' },
+  { href: '/passion-projects', label: 'projects' },
+  { href: '/exhibit', label: 'exhibit' },
+  { href: '/involvements', label: 'affinity' },
+  { href: '/about', label: 'about' },
 ];
 ---
 
 <header class="site-header">
-  <a class="site-name" href="/">Angela Ye</a>
   <nav class="site-nav" aria-label="Primary navigation">
     {
-      links.map(({ href, label }) => (
-        <a
-          href={href}
-          aria-current={pathname === href || (href === '/exhibit' && pathname === '/films') ? 'page' : undefined}
-        >
-          {label}
-        </a>
+      links.map(({ href, label }, index) => (
+        <>
+          <a
+            href={href}
+            aria-current={
+              pathname === href ||
+              (href === '/passion-projects' && pathname.startsWith('/passion-projects')) ||
+              (href === '/exhibit' && pathname === '/films')
+                ? 'page'
+                : undefined
+            }
+          >
+            {label}
+          </a>
+          {index < links.length - 1 && (
+            <span class="site-nav__separator" aria-hidden="true">·</span>
+          )}
+        </>
       ))
     }
   </nav>

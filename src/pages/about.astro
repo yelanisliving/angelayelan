@@ -14,57 +14,69 @@ const linkedInUrl = 'https://www.linkedin.com/in/angela-ye-bb12281ab/';
 >
   <section class="about-page" aria-labelledby="about-title">
     <div class="about-page__copy">
-      <p class="eyebrow">About</p>
-      <h1 id="about-title">Hi! I’m Angela :)</h1>
+      <h1 id="about-title">angela ye (叶兰)</h1>
 
       <p>
-        A snoopy fanatic who's currently exploring the space between technology and visual media, & studying computer science
-        at UC Berkeley!
+        a snoopy fanatic, studying computer science at uc berkeley!<br />
+        i'm exploring technology and visual media, interested in all-things computer vision/graphics, 3d animation, & creative-tech.
       </p>
 
       <div class="about-page__aside">
-        <p>Outside of school, I’m usually:</p>
+        <p>the haps for now:</p>
         <ul>
-          <li>Playing badminton</li>
-          <li>Practicing cinematography</li>
-          <li>Looking for new movies to watch (or rewatching La La Land)</li>
-          <li>EATING</li>
+          <li>
+            interning at <a href="https://palettelabs.com" target="_blank" rel="noreferrer">Palette (YC S26)</a>
+          </li>
+          <li>
+            creating a documentary for <a href="https://hackberkeley.org" target="_blank" rel="noreferrer">hackathons @ berkeley</a>
+          </li>
+          <li>rewatching La La Land</li>
+          <li>eating! (my beli @angelayelan)</li>
         </ul>
       </div>
 
       <p class="about-page__links">
-        Explore my <a href="/#projects">projects and involvements</a> or watch my
-        <a href="/exhibit">exhibit</a>.
-      </p>
-
-      <p class="about-page__links">
-        Say hello at <a href="mailto:angelaye@berkeley.edu">angelaye@berkeley.edu</a> or via
-        <a href={linkedInUrl} target="_blank" rel="noreferrer">LinkedIn</a>.
+        say hello at <a href="mailto:angelaye@berkeley.edu">angelaye@berkeley.edu</a> or via
+        <a href={linkedInUrl} target="_blank" rel="noreferrer">linkedin</a>.
       </p>
     </div>
 
-    <figure class="about-page__photo about-page__photo--portrait">
-      <img
-        src={portraitPhoto.src}
-        alt="Angela standing outside in warm evening sunlight"
-      />
-    </figure>
+    <div class="about-page__photos">
+      <p class="about-page__photos-label">click us!</p>
 
-    <div class="about-page__photo-stack">
-      <figure class="about-page__photo">
-        <img
-          src={flowerPhoto.src}
-          alt="A yellow flower photographed through a soft, dreamy lens"
-          loading="lazy"
-        />
-      </figure>
-      <figure class="about-page__photo">
-        <img
-          src={detailPhoto.src}
-          alt="Hands holding handmade yellow flowers in evening light"
-          loading="lazy"
-        />
-      </figure>
+      <div class="about-page__photos-grid">
+        <figure class="about-page__photo about-page__photo--portrait about-page__photo--clickable">
+          <img
+            src={portraitPhoto.src}
+            alt="Angela standing outside in warm evening sunlight"
+          />
+        </figure>
+
+        <div class="about-page__photo-stack">
+          <figure class="about-page__photo about-page__photo--clickable">
+            <img
+              src={flowerPhoto.src}
+              alt="A yellow flower photographed through a soft, dreamy lens"
+              loading="lazy"
+            />
+          </figure>
+          <figure class="about-page__photo about-page__photo--clickable">
+            <img
+              src={detailPhoto.src}
+              alt="Hands holding handmade yellow flowers in evening light"
+              loading="lazy"
+            />
+          </figure>
+        </div>
+      </div>
     </div>
   </section>
+
+  <script>
+    document.querySelectorAll('.about-page__photo--clickable').forEach((photo) => {
+      photo.addEventListener('click', () => {
+        photo.classList.toggle('is-color');
+      });
+    });
+  </script>
 </BaseLayout>

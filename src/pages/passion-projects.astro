@@ -1,35 +1,70 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ProjectCard from '../components/ProjectCard.astro';
 import { getCollection } from 'astro:content';
+import sortingHatCover from '../../photography/one.png';
+import colorGradingCover from '../../photography/two.png';
+import birdieCover from '../../photography/three.png';
 
-const projects = (await getCollection('projects')).sort(
-  (a, b) => a.data.date.getTime() - b.data.date.getTime(),
-);
+const projects = (await getCollection('projects'))
+  .filter((project) => project.data.featured)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 const getProjectSlug = (id: string) => id.replace(/\.md$/, '');
+const projectImageOverrides: Record<string, { src: string; alt: string }> = {
+  'technical-project-01': {
+    src: sortingHatCover.src,
+    alt: 'Handmade voice-interactive Hogwarts Sorting Hat on a dark background',
+  },
+  'technical-project-02': {
+    src: colorGradingCover.src,
+    alt: 'Poster for the cinematic color-grading research project',
+  },
+  'technical-project-03': {
+    src: birdieCover.src,
+    alt: 'BIRDIE badminton form-analysis logo',
+  },
+};
 ---
 
 <BaseLayout
-  title="Passion projects"
-  description="Experiments, works in progress, and passion projects by Angela Yelan."
+  title="Projects"
+  description="Technical projects and experiments by Angela Yelan."
 >
-  <section class="page-intro page-intro--wide" aria-labelledby="projects-title">
-    <p class="eyebrow">Selected work</p>
-    <h1 id="projects-title">Passion projects.</h1>
-    <p class="lede">
-      A home for experiments, obsessions, and things made for the joy of making them.
-    </p>
-    <div class="project-list project-list--page">
+  <section class="projects-index" aria-labelledby="projects-title">
+    <header class="projects-index__intro">
+      <h1 id="projects-title">projects</h1>
+      <p>
+        A collection of things I’ve built, studied, and shaped across computer science,
+        physical computing, and visual storytelling.
+      </p>
+    </header>
+
+    <div class="projects-index__grid">
       {
-        projects.map((project, index) => (
-          <ProjectCard
-            href={`/passion-projects/${getProjectSlug(project.id)}`}
-            index={String(index + 1).padStart(2, '0')}
-            title={project.data.title}
-            description={project.data.description}
-            status="Technical project"
-          />
-        ))
+        projects.map((project, index) => {
+          const slug = getProjectSlug(project.id);
+          const image = projectImageOverrides[slug];
+
+          return (
+            <a class="project-tile" href={`/passion-projects/${slug}`}>
+              <div class="project-tile__media">
+                {image || project.data.image ? (
+                  <img
+                    src={image?.src ?? project.data.image}
+                    alt={image?.alt ?? project.data.imageAlt ?? ''}
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                  />
+                ) : (
+                  <span>Project image</span>
+                )}
+              </div>
+              <div class="project-tile__content">
+                <div class="project-tile__title-row">
+                  <h2>{project.data.title}</h2>
+                </div>
+              </div>
+            </a>
+          );
+        })
       }
     </div>
   </section>

@@ -1,3 +1,106 @@
+---
+import { execFileSync } from 'node:child_process';
+
+const linkedInUrl = 'https://www.linkedin.com/in/angela-ye-bb12281ab/';
+
+let lastUpdated = 'recently';
+
+try {
+  const committedAt = execFileSync('git', ['log', '-1', '--format=%cI'], {
+    encoding: 'utf8',
+  }).trim();
+
+  const date = new Date(committedAt);
+  const monthAbbr = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(date);
+  lastUpdated = `${monthAbbr}. ${date.getDate()} ${date.getFullYear()}`;
+} catch {
+  // Keep a human-readable fallback when Git metadata is unavailable during a build.
+}
+
+const contactLinks = [
+  {
+    href: 'https://www.instagram.com/angelayelan/',
+    label: 'Instagram — @angelayelan',
+    image: '/images/contact/instagram-watercolor.png',
+    external: true,
+  },
+  {
+    href: undefined,
+    label: 'Phone number to be added',
+    image: '/images/contact/phone-watercolor.png',
+    external: false,
+  },
+  {
+    href: linkedInUrl,
+    label: 'Angela Ye on LinkedIn',
+    image: '/images/contact/linkedin-watercolor.png',
+    external: true,
+  },
+  {
+    href: 'mailto:angelaye@berkeley.edu',
+    label: 'Email angelaye@berkeley.edu',
+    image: '/images/contact/email-watercolor.png',
+    external: false,
+  },
+];
+---
+
 <footer class="site-footer">
-  <span>&copy; {new Date().getFullYear()} Angela Ye</span>
+  <p class="site-footer__updated">
+    last updated {lastUpdated.toLowerCase()}.
+    {' '}
+    <span data-visitor-count>you're a visitor :)</span>
+  </p>
+  <p class="site-footer__discipline">media tech / visual computing</p>
+  <nav class="site-footer__contacts" aria-label="Contact Angela">
+    {
+      contactLinks.map(({ href, label, image, external }) =>
+        href ? (
+          <a
+            href={href}
+            aria-label={label}
+            title={label}
+            target={external ? '_blank' : undefined}
+            rel={external ? 'noreferrer' : undefined}
+          >
+            <img src={image} alt="" />
+          </a>
+        ) : (
+          <span class="site-footer__contact--pending" aria-label={label} title={label}>
+            <img src={image} alt="" />
+          </span>
+        ),
+      )
+    }
+  </nav>
 </footer>
+
+<script>
+  const ordinal = (count: number) => {
+    const remainder100 = count % 100;
+    if (remainder100 >= 11 && remainder100 <= 13) return `${count}th`;
+    switch (count % 10) {
+      case 1:
+        return `${count}st`;
+      case 2:
+        return `${count}nd`;
+      case 3:
+        return `${count}rd`;
+      default:
+        return `${count}th`;
+    }
+  };
+
+  const visitorCountEl = document.querySelector('[data-visitor-count]');
+
+  if (visitorCountEl) {
+    fetch('https://abacus.jasoncameron.dev/hit/angelayelan-portfolio/site-visits')
+      .then((response) => response.json())
+      .then((data) => {
+        visitorCountEl.textContent = `you're the ${ordinal(data.value)} visitor :)`;
+      })
+      .catch(() => {
+        // Keep the generic fallback text if the counter is unreachable.
+      });
+  }
+</script>
