@@ -1,19 +1,189 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const stillSets = [
+  {
+    layout: 'triptych',
+    caption: '"a thing is not beautiful because it lasts." - Vision from Avengers',
+    photos: [
+      { src: '/images/image-stills/1.jpg', fileName: 'set-01-a.jpg', alt: 'Describe the first photo in this collection' },
+      { src: '/images/image-stills/2.jpg', fileName: 'set-01-b.jpg', alt: 'Describe the second photo in this collection' },
+      { src: '/images/image-stills/3.jpg', fileName: 'set-01-c.jpg', alt: 'Describe the third photo in this collection' },
+    ],
+  },
+  {
+    layout: 'portrait',
+    caption: 'i developed this film photo! (it is a physical print)',
+    photos: [
+      { src: '/images/image-stills/four.png', fileName: 'set-02-a.jpg', alt: 'Describe this portrait photograph' },
+    ],
+  },
+  {
+    layout: 'triptych',
+    caption: 'from my sony digital camera',
+    photos: [
+      { src: '/images/image-stills/five.png', fileName: 'set-03-a.jpg', alt: 'Describe the first photo in this collection' },
+      { src: '/images/image-stills/6.JPG', fileName: 'set-03-b.jpg', alt: 'Describe the second photo in this collection' },
+      { src: '/images/image-stills/7.JPG', fileName: 'set-03-c.jpg', alt: 'Describe the third photo in this collection' },
+    ],
+  },
+  {
+    layout: 'triptych',
+    caption: 'warner bros. studio, hollywood',
+    photos: [
+      { src: '/images/image-stills/8.JPG', fileName: 'set-04-a.jpg', alt: 'Describe the first photo in this collection' },
+      { src: '/images/image-stills/9.jpg', fileName: 'set-04-b.jpg', alt: 'Describe the second photo in this collection' },
+      { src: '/images/image-stills/10.JPG', fileName: 'set-04-c.jpg', alt: 'Describe the third photo in this collection' },
+    ],
+  },
+];
+
+// Put photography in public/images/image-stills/, then replace each empty `src`
+// above with a path such as `/images/image-stills/set-01-a.jpg`.
 ---
 
 <BaseLayout
   title="Image Stills"
   description="A collection of photography by Angela Yelan."
 >
-  <section class="cinema-page" aria-labelledby="image-stills-page-title">
-    <header class="cinema-page__masthead">
-      <a class="cinema-page__back" href="/exhibit">
-        <span aria-hidden="true">←</span> back
-      </a>
-      <h1 id="image-stills-page-title">image stills</h1>
+  <section class="image-stills-page" data-image-stills aria-labelledby="image-stills-page-title">
+    <div class="image-stills-stage">
+      <header class="image-stills-heading">
+        <h1 id="image-stills-page-title">image stills</h1>
+        <button
+          class="camera-trigger"
+          type="button"
+          aria-label="Take a picture and show the next photo collection"
+        >
+          <span class="camera-trigger__label" aria-hidden="true">click me!</span>
+          <img
+            src="/images/image-stills/camera-watercolor-v2.png"
+            alt=""
+            width="1536"
+            height="1024"
+          />
+          <span class="camera-trigger__spark" aria-hidden="true"></span>
+        </button>
     </header>
 
-    <p class="cinema-page__subtitle">coming soon.</p>
+      <div class="image-stills-sets">
+        {stillSets.map((set, setIndex) => (
+          <figure
+            class={`image-stills-set image-stills-set--${set.layout}`}
+            data-still-set
+            hidden={setIndex !== 0}
+          >
+            <div class="image-stills-set__photos">
+              {set.photos.map((photo) => (
+                photo.src ? (
+                  <button
+                    class="image-stills-photo"
+                    type="button"
+                    data-cursor="interactive"
+                    aria-label={`View a larger version of ${photo.alt}`}
+                  >
+                    <img src={photo.src} alt={photo.alt} loading={setIndex === 0 ? 'eager' : 'lazy'} />
+                  </button>
+                ) : (
+                  <div class="image-stills-placeholder" role="img" aria-label={`Placeholder for ${photo.alt}`}>
+                    <span>your photo here</span>
+                    <small>{photo.fileName}</small>
+                  </div>
+                )
+              ))}
+            </div>
+            <figcaption>{set.caption}</figcaption>
+          </figure>
+        ))}
+      </div>
+
+      <p class="sr-only" data-still-status aria-live="polite">
+        Showing photo collection 1 of {stillSets.length}.
+      </p>
+    </div>
+
+    <div class="image-stills-lightbox" data-lightbox hidden>
+      <div class="image-stills-lightbox__frame">
+        <img data-lightbox-image src="" alt="" />
+        <button class="image-stills-lightbox__close" type="button" data-cursor="interactive" aria-label="Close the larger photo view">
+          ×
+        </button>
+      </div>
+    </div>
   </section>
 </BaseLayout>
+
+<script>
+  const gallery = document.querySelector<HTMLElement>('[data-image-stills]');
+
+  if (gallery) {
+    const trigger = gallery.querySelector<HTMLButtonElement>('.camera-trigger');
+    const sets = Array.from(gallery.querySelectorAll<HTMLElement>('[data-still-set]'));
+    const status = gallery.querySelector<HTMLElement>('[data-still-status]');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let activeIndex = 0;
+    let isChanging = false;
+
+    const showNextSet = () => {
+      sets[activeIndex]?.setAttribute('hidden', '');
+      activeIndex = (activeIndex + 1) % sets.length;
+      sets[activeIndex]?.removeAttribute('hidden');
+
+      if (status) {
+        status.textContent = `Showing photo collection ${activeIndex + 1} of ${sets.length}.`;
+      }
+    };
+
+    trigger?.addEventListener('click', () => {
+      if (isChanging || sets.length < 2) return;
+      isChanging = true;
+      gallery.classList.remove('is-snapping');
+      void gallery.offsetWidth;
+      gallery.classList.add('is-snapping');
+      showNextSet();
+
+      if (prefersReducedMotion) {
+        gallery.classList.remove('is-snapping');
+        isChanging = false;
+        return;
+      }
+
+      window.setTimeout(() => {
+        gallery.classList.remove('is-snapping');
+        isChanging = false;
+      }, 380);
+    });
+
+    const lightbox = gallery.querySelector<HTMLElement>('[data-lightbox]');
+    const lightboxImage = lightbox?.querySelector<HTMLImageElement>('[data-lightbox-image]');
+    const lightboxClose = lightbox?.querySelector<HTMLButtonElement>('.image-stills-lightbox__close');
+    const photoButtons = Array.from(gallery.querySelectorAll<HTMLButtonElement>('.image-stills-photo'));
+
+    const openLightbox = (photo: HTMLImageElement) => {
+      if (!lightbox || !lightboxImage) return;
+      lightboxImage.src = photo.src;
+      lightboxImage.alt = photo.alt;
+      lightbox.hidden = false;
+    };
+
+    const closeLightbox = () => {
+      if (!lightbox || !lightboxImage) return;
+      lightbox.hidden = true;
+      lightboxImage.src = '';
+    };
+
+    photoButtons.forEach((button) => {
+      const photo = button.querySelector('img');
+      if (!photo) return;
+      button.addEventListener('click', () => openLightbox(photo));
+    });
+
+    lightboxClose?.addEventListener('click', closeLightbox);
+    lightbox?.addEventListener('click', (event) => {
+      if (event.target === lightbox) closeLightbox();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeLightbox();
+    });
+  }
+</script>

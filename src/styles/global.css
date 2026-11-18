@@ -30,6 +30,18 @@ body {
   overflow-x: hidden;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 a {
   color: inherit;
   text-underline-offset: 0.2em;
@@ -60,7 +72,7 @@ a:hover {
     --cursor-x: -3rem;
     --cursor-y: -3rem;
     position: fixed;
-    z-index: 100;
+    z-index: 1000;
     top: 0;
     left: 0;
     display: grid;
@@ -138,6 +150,13 @@ main:has(> .portfolio-intro) {
 main {
   width: min(calc(100% - 2rem), var(--content-width));
   margin-inline: auto;
+}
+
+main:has(> .case-study),
+main:has(> .sorting-study),
+main:has(> .color-study),
+main:has(> .birdie-study) {
+  max-width: 58rem;
 }
 
 .site-header {
@@ -1084,6 +1103,11 @@ main:has(> .cinema-page) {
   text-align: center;
 }
 
+#image-stills-page-title {
+  font-size: clamp(2.25rem, 3.5vw, 2.8rem);
+  text-align: center;
+}
+
 .cinema-page__back {
   position: absolute;
   top: 50%;
@@ -1117,6 +1141,270 @@ main:has(> .cinema-page) {
   font-size: clamp(0.88rem, 1.4vw, 1rem);
   line-height: 1.45;
   text-align: center;
+}
+
+/* Image stills shutter gallery */
+.site-shell:has(.image-stills-page) {
+  min-height: 100svh;
+}
+
+main:has(> .image-stills-page) {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+}
+
+.image-stills-page {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  padding: clamp(2.5rem, 7vh, 5.5rem) clamp(1.25rem, 5vw, 5rem);
+}
+
+.image-stills-stage {
+  width: min(100%, 64rem);
+  margin-inline: auto;
+}
+
+.image-stills-heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.2rem, 0.8vw, 0.65rem);
+  margin-bottom: clamp(1.2rem, 3vh, 2rem);
+}
+
+.image-stills-heading h1 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.15rem, 4.4vw, 3.3rem);
+  font-weight: 400;
+  line-height: 0.95;
+}
+
+.camera-trigger {
+  position: relative;
+  width: clamp(4.5rem, 7vw, 5.8rem);
+  margin-top: 0.3rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.camera-trigger img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 180ms ease;
+  transform: rotate(7deg);
+}
+
+.camera-trigger__label {
+  position: absolute;
+  right: -0.45rem;
+  bottom: calc(100% - 0.6rem);
+  width: max-content;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.72rem, 1.2vw, 0.88rem);
+  font-style: italic;
+  transform: rotate(18deg);
+}
+
+.camera-trigger__spark {
+  position: absolute;
+  z-index: 2;
+  top: 42%;
+  left: -0.35rem;
+  width: clamp(2.3rem, 4.2vw, 3.25rem);
+  aspect-ratio: 1;
+  background: #efc84b;
+  clip-path: polygon(50% 0%, 61% 34%, 98% 31%, 68% 53%, 79% 90%, 50% 68%, 20% 91%, 31% 55%, 1% 33%, 39% 34%);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-45%, -50%) scale(0.25) rotate(-18deg);
+}
+
+.camera-trigger:is(:hover, :focus-visible) img {
+  transform: translateY(-0.18rem) rotate(4deg) scale(1.04);
+}
+
+.camera-trigger:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 0.35rem;
+}
+
+.image-stills-sets {
+  min-height: clamp(17rem, 34vw, 24rem);
+}
+
+.image-stills-set {
+  margin: 0;
+}
+
+.image-stills-set[hidden] {
+  display: none;
+}
+
+.image-stills-set__photos {
+  display: grid;
+  gap: clamp(0.55rem, 1.2vw, 1rem);
+  align-items: center;
+  justify-content: center;
+}
+
+.image-stills-set--triptych .image-stills-set__photos {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.image-stills-set--portrait .image-stills-set__photos {
+  width: min(100%, 18rem);
+  margin-inline: auto;
+}
+
+.image-stills-set__photos > .image-stills-photo,
+.image-stills-placeholder {
+  width: 100%;
+  background:
+    linear-gradient(145deg, rgba(236, 197, 198, 0.18), rgba(138, 157, 177, 0.14)),
+    var(--surface);
+}
+
+.image-stills-placeholder {
+  border: 1px solid color-mix(in srgb, var(--muted) 38%, transparent);
+}
+
+.image-stills-photo {
+  display: block;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.image-stills-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 180ms ease;
+}
+
+.image-stills-photo:hover img,
+.image-stills-photo:focus-visible img {
+  opacity: 0.88;
+}
+
+.image-stills-set--triptych .image-stills-set__photos > .image-stills-photo,
+.image-stills-set--triptych .image-stills-placeholder {
+  aspect-ratio: 4 / 3;
+}
+
+.image-stills-set--portrait .image-stills-set__photos > .image-stills-photo,
+.image-stills-set--portrait .image-stills-placeholder {
+  aspect-ratio: 3 / 4;
+}
+
+.image-stills-placeholder {
+  display: grid;
+  place-content: center;
+  gap: 0.4rem;
+  padding: 1rem;
+  color: var(--muted);
+  font-family: Georgia, "Times New Roman", serif;
+  text-align: center;
+}
+
+.image-stills-placeholder small {
+  font-family: inherit;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  opacity: 0.72;
+}
+
+.image-stills-set figcaption {
+  margin-top: clamp(0.65rem, 1.5vh, 0.95rem);
+  color: var(--muted);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.9rem, 1.6vw, 1.1rem);
+  text-align: center;
+}
+
+.image-stills-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: clamp(1.5rem, 5vw, 3rem);
+  background: color-mix(in srgb, var(--background) 85%, #000 15%);
+  animation: image-stills-lightbox-in 180ms ease-out both;
+}
+
+.image-stills-lightbox[hidden] {
+  display: none;
+}
+
+.image-stills-lightbox__frame {
+  position: relative;
+  max-width: min(100%, 42rem);
+  max-height: 65vh;
+}
+
+.image-stills-lightbox img {
+  display: block;
+  max-width: min(100%, 42rem);
+  max-height: 65vh;
+  object-fit: contain;
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.25);
+}
+
+.image-stills-lightbox__close {
+  position: absolute;
+  top: -0.6rem;
+  right: -0.6rem;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: none;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.18);
+}
+
+@keyframes image-stills-lightbox-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.image-stills-page.is-snapping .camera-trigger img {
+  animation: camera-shutter 320ms ease-out both;
+}
+
+.image-stills-page.is-snapping .camera-trigger__spark {
+  animation: camera-spark 380ms ease-out both;
+}
+
+@keyframes camera-shutter {
+  0%, 100% { transform: rotate(7deg); }
+  35% { transform: scale(0.94) rotate(10deg); }
+}
+
+@keyframes camera-spark {
+  0% { opacity: 0; transform: translate(-45%, -50%) scale(0.2) rotate(-25deg); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-45%, -50%) scale(1.25) rotate(7deg); }
 }
 
 .cinema-player {
@@ -2643,7 +2931,7 @@ main:has(> .cinema-page) {
   border: 1px solid var(--line);
   color: var(--muted);
   background: var(--surface);
-  font-size: 0.75rem;
+  font-size: 0.46rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -2662,6 +2950,8 @@ main:has(> .cinema-page) {
 
 .case-study__details section > p:last-child {
   color: var(--muted);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
   line-height: 1.65;
 }
 
@@ -2672,11 +2962,13 @@ main:has(> .cinema-page) {
 
 .case-study__content h2 {
   margin-top: 3.5rem;
-  font-size: clamp(1.6rem, 3.2vw, 2.5rem);
+  font-size: clamp(0.99rem, 1.98vw, 1.55rem);
 }
 
 .case-study__content p {
   color: var(--muted);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
   line-height: 1.75;
 }
 
@@ -2696,7 +2988,7 @@ main:has(> .cinema-page) {
 }
 
 .sorting-study__hero h1 {
-  font-size: clamp(3rem, 6.4vw, 5.8rem);
+  font-size: clamp(1.86rem, 3.97vw, 3.6rem);
 }
 
 .sorting-study__lede {
@@ -2704,7 +2996,7 @@ main:has(> .cinema-page) {
   margin: 2rem 0 0;
   color: var(--muted);
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1rem, 1.65vw, 1.2rem);
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
   line-height: 1.65;
 }
 
@@ -2724,7 +3016,7 @@ main:has(> .cinema-page) {
 .sorting-study__facts dt,
 .sorting-study__facts dd {
   margin: 0;
-  font-size: 0.75rem;
+  font-size: 0.46rem;
 }
 
 .sorting-study__facts dt {
@@ -2746,7 +3038,8 @@ main:has(> .cinema-page) {
 .sorting-study figcaption {
   margin-top: 0.7rem;
   color: var(--muted);
-  font-size: 0.72rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
 }
 
 .sorting-study__intro {
@@ -2823,7 +3116,7 @@ main:has(> .cinema-page) {
   display: block;
   margin-bottom: 0.5rem;
   color: var(--muted);
-  font-size: 0.66rem;
+  font-size: 0.41rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -2832,7 +3125,7 @@ main:has(> .cinema-page) {
 .sorting-study__resource-label strong {
   display: block;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1.15rem, 1.7vw, 1.5rem);
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
   font-weight: 400;
   line-height: 1.2;
 }
@@ -2840,14 +3133,15 @@ main:has(> .cinema-page) {
 .sorting-study__resource-copy p {
   margin: 0.7rem 0 0;
   color: var(--muted);
-  font-size: 0.78rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
   line-height: 1.5;
 }
 
 .sorting-study__resource-copy small {
   display: block;
   margin-top: 1rem;
-  font-size: 0.68rem;
+  font-size: 0.42rem;
   text-transform: uppercase;
 }
 
@@ -2880,7 +3174,7 @@ main:has(> .cinema-page) {
   display: block;
   padding: 0.85rem 1.1rem;
   border-top: 1px solid var(--line);
-  font-size: 0.68rem;
+  font-size: 0.42rem;
   text-decoration: none;
   text-transform: uppercase;
 }
@@ -2901,14 +3195,15 @@ main:has(> .cinema-page) {
 
 .sorting-study__notebook-placeholder span {
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1.7rem, 3.2vw, 2.5rem);
+  font-size: clamp(1.05rem, 1.98vw, 1.55rem);
 }
 
 .sorting-study__notebook-placeholder p {
   max-width: 13rem;
   margin: 0.75rem 0 0;
   color: var(--muted);
-  font-size: 0.75rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
   line-height: 1.5;
 }
 
@@ -2918,7 +3213,7 @@ main:has(> .cinema-page) {
 
 .sorting-study__prose h2 {
   margin: 0 0 1.5rem;
-  font-size: clamp(1.75rem, 4vw, 3.2rem);
+  font-size: clamp(1.08rem, 2.48vw, 1.98rem);
 }
 
 .sorting-study__prose h2:not(:first-child) {
@@ -2927,7 +3222,8 @@ main:has(> .cinema-page) {
 
 .sorting-study__prose p {
   color: var(--muted);
-  font-size: clamp(1rem, 1.5vw, 1.12rem);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
   line-height: 1.8;
 }
 
@@ -2944,7 +3240,7 @@ main:has(> .cinema-page) {
 .sorting-study__section-heading h2,
 .sorting-study__notebook h2,
 .sorting-study__craft h2 {
-  font-size: clamp(2rem, 4.8vw, 3.9rem);
+  font-size: clamp(1.24rem, 2.98vw, 2.42rem);
 }
 
 .sorting-study__pipeline ol {
@@ -2966,7 +3262,7 @@ main:has(> .cinema-page) {
 
 .sorting-study__pipeline li > span {
   color: var(--muted);
-  font-size: 0.7rem;
+  font-size: 0.43rem;
 }
 
 .sorting-study__pipeline li div {
@@ -2985,20 +3281,22 @@ main:has(> .cinema-page) {
 
 .sorting-study__pipeline li p {
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: 0.45rem;
   text-transform: uppercase;
 }
 
 .sorting-study__pipeline li strong {
   margin-top: 0.3rem;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 1.5rem;
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
   font-weight: 400;
 }
 
 .sorting-study__pipeline li small {
   margin-top: 1rem;
   color: var(--muted);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
   line-height: 1.5;
 }
 
@@ -3049,7 +3347,7 @@ main:has(> .cinema-page) {
 
 .sorting-study__demo-placeholder span {
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1.75rem, 4vw, 3.2rem);
+  font-size: clamp(1.08rem, 2.48vw, 1.98rem);
 }
 
 .sorting-study__demo-placeholder p {
@@ -3068,7 +3366,7 @@ main:has(> .cinema-page) {
 
 .color-study__hero h1 {
   max-width: 70rem;
-  font-size: clamp(2.9rem, 6.5vw, 5.9rem);
+  font-size: clamp(1.8rem, 4.03vw, 3.66rem);
 }
 
 .color-study__lede {
@@ -3076,7 +3374,7 @@ main:has(> .cinema-page) {
   margin: 2rem 0 0;
   color: var(--muted);
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1rem, 1.65vw, 1.2rem);
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
   line-height: 1.65;
 }
 
@@ -3109,7 +3407,7 @@ main:has(> .cinema-page) {
 
 .color-study__prose h2 {
   margin: 0 0 1.5rem;
-  font-size: clamp(1.75rem, 4vw, 3.2rem);
+  font-size: clamp(1.08rem, 2.48vw, 1.98rem);
 }
 
 .color-study__prose h2:not(:first-child) {
@@ -3118,7 +3416,8 @@ main:has(> .cinema-page) {
 
 .color-study__prose p {
   color: var(--muted);
-  font-size: clamp(1rem, 1.5vw, 1.12rem);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
   line-height: 1.8;
 }
 
@@ -3138,7 +3437,7 @@ main:has(> .cinema-page) {
 
 .color-study__findings h2,
 .color-study__section-heading h2 {
-  font-size: clamp(2rem, 4.8vw, 3.9rem);
+  font-size: clamp(1.24rem, 2.98vw, 2.42rem);
 }
 
 .color-study__findings dl {
@@ -3164,13 +3463,13 @@ main:has(> .cinema-page) {
 
 .color-study__findings dt {
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1.4rem, 2.4vw, 2.1rem);
+  font-size: clamp(0.87rem, 1.49vw, 1.3rem);
 }
 
 .color-study__findings dd {
   margin: 0;
   color: var(--muted);
-  font-size: 0.75rem;
+  font-size: 0.46rem;
   text-transform: uppercase;
 }
 
@@ -3206,14 +3505,14 @@ main:has(> .cinema-page) {
 .color-study__document header span,
 .color-study__document header p {
   color: var(--muted);
-  font-size: 0.68rem;
+  font-size: 0.42rem;
   text-transform: uppercase;
 }
 
 .color-study__document header h3 {
   margin: 1rem 0 0;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1.25rem, 2.1vw, 1.85rem);
+  font-size: clamp(0.78rem, 1.3vw, 1.15rem);
   font-weight: 400;
   line-height: 1.15;
 }
@@ -3241,7 +3540,7 @@ main:has(> .cinema-page) {
 
 .color-study__document > a {
   padding: 1rem 1.25rem;
-  font-size: 0.7rem;
+  font-size: 0.43rem;
   text-decoration: none;
   text-transform: uppercase;
 }
@@ -3252,7 +3551,7 @@ main:has(> .cinema-page) {
 
 .birdie-study__hero h1 {
   max-width: 70rem;
-  font-size: clamp(3rem, 6.4vw, 5.8rem);
+  font-size: clamp(1.86rem, 3.97vw, 3.6rem);
 }
 
 .birdie-study__lede {
@@ -3261,7 +3560,7 @@ main:has(> .cinema-page) {
   margin: 2rem 0 0;
   color: var(--muted);
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1rem, 1.65vw, 1.2rem);
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
   line-height: 1.65;
 }
 
@@ -3283,7 +3582,7 @@ main:has(> .cinema-page) {
 .birdie-study__showcase-copy span {
   display: block;
   color: var(--muted);
-  font-size: 0.68rem;
+  font-size: 0.42rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -3292,7 +3591,7 @@ main:has(> .cinema-page) {
   display: block;
   margin-top: 1.5rem;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-size: clamp(1.24rem, 2.48vw, 2.17rem);
   font-weight: 400;
   letter-spacing: -0.04em;
   line-height: 1;
@@ -3301,6 +3600,8 @@ main:has(> .cinema-page) {
 .birdie-study__showcase-copy p {
   margin: 1.5rem 0 0;
   color: var(--muted);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
   line-height: 1.7;
 }
 
@@ -3339,7 +3640,7 @@ main:has(> .cinema-page) {
 
 .birdie-study__prose h2 {
   margin: 0 0 1.5rem;
-  font-size: clamp(1.75rem, 4vw, 3.2rem);
+  font-size: clamp(1.08rem, 2.48vw, 1.98rem);
 }
 
 .birdie-study__prose h2:not(:first-child) {
@@ -3348,7 +3649,8 @@ main:has(> .cinema-page) {
 
 .birdie-study__prose p {
   color: var(--muted);
-  font-size: clamp(1rem, 1.5vw, 1.12rem);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
   line-height: 1.8;
 }
 
@@ -3364,7 +3666,7 @@ main:has(> .cinema-page) {
 }
 
 .birdie-study__section-heading h2 {
-  font-size: clamp(2rem, 4.8vw, 3.9rem);
+  font-size: clamp(1.24rem, 2.98vw, 2.42rem);
 }
 
 .birdie-study__section-heading > p:last-child:not(.eyebrow) {
@@ -3380,7 +3682,8 @@ main:has(> .cinema-page) {
 
 .birdie-study__section-heading .birdie-study__archive-note {
   max-width: none;
-  font-size: clamp(0.78rem, 1.15vw, 1rem);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
   white-space: nowrap;
 }
 
@@ -3405,20 +3708,21 @@ main:has(> .cinema-page) {
 
 .birdie-study__system li span {
   color: var(--muted);
-  font-size: 0.68rem;
+  font-size: 0.42rem;
 }
 
 .birdie-study__system li strong {
   margin-top: auto;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 1.6rem;
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
   font-weight: 400;
 }
 
 .birdie-study__system li p {
   margin: 0.8rem 0 0;
   color: var(--muted);
-  font-size: 0.78rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
   line-height: 1.55;
 }
 
@@ -3441,7 +3745,7 @@ main:has(> .cinema-page) {
   display: block;
   padding: 1rem 1.25rem;
   border-top: 1px solid var(--line);
-  font-size: 0.7rem;
+  font-size: 0.43rem;
   text-decoration: none;
   text-transform: uppercase;
 }
@@ -3469,7 +3773,7 @@ main:has(> .cinema-page) {
 
 .birdie-study__demo-placeholder span {
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1.75rem, 4vw, 3.2rem);
+  font-size: clamp(1.08rem, 2.48vw, 1.98rem);
 }
 
 .birdie-study__demo-placeholder p {
@@ -3952,6 +4256,34 @@ main:has(> .cinema-page) {
 
   .about-page__photo-stack .about-page__photo {
     aspect-ratio: 4 / 3;
+  }
+
+  .image-stills-page {
+    padding-block: 3rem;
+  }
+
+  .image-stills-stage {
+    width: min(100%, 38rem);
+  }
+
+  .image-stills-heading {
+    margin-bottom: 1.15rem;
+  }
+
+  .image-stills-sets {
+    min-height: 13rem;
+  }
+}
+
+@media (max-width: 35rem) {
+  .image-stills-set--triptych .image-stills-set__photos {
+    width: min(100%, 23rem);
+    margin-inline: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .image-stills-sets {
+    min-height: 0;
   }
 }
 

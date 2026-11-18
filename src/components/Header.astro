@@ -19,7 +19,7 @@ const links = [
             aria-current={
               pathname === href ||
               (href === '/passion-projects' && pathname.startsWith('/passion-projects')) ||
-              (href === '/exhibit' && pathname === '/films')
+              (href === '/exhibit' && ['/films', '/image-stills', '/writing'].includes(pathname))
                 ? 'page'
                 : undefined
             }

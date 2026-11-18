@@ -18,7 +18,7 @@ const sliderGroups = [false, true];
 >
   <section
     class="projector-stage projector-stage--reel"
-    data-projector="off"
+    data-projector="on"
     aria-labelledby="exhibit-page-title"
   >
     <div class="projector-stage__glow" aria-hidden="true"></div>
@@ -36,13 +36,13 @@ const sliderGroups = [false, true];
     <button
       class="projector-pull"
       type="button"
-      aria-pressed="false"
-      aria-label="Turn the video projector on"
+      aria-pressed="true"
+      aria-label="Turn the video projector off"
       data-cursor="interactive"
     >
       <span class="projector-pull__cord" aria-hidden="true"></span>
       <span class="projector-pull__handle" aria-hidden="true"></span>
-      <span class="projector-pull__label">click to project</span>
+      <span class="projector-pull__label">click to dim</span>
     </button>
 
     <header class="media-page__intro">
@@ -180,19 +180,8 @@ const sliderGroups = [false, true];
     }
   };
 
-  const cameFromMediaPage = (() => {
-    try {
-      const referrer = new URL(document.referrer);
-      if (referrer.origin !== window.location.origin) return false;
-      const path = referrer.pathname.replace(/\/$/, '');
-      return path === '/image-stills' || path === '/films' || path === '/writing';
-    } catch {
-      return false;
-    }
-  })();
-
   if (projectorStage && projectorPull && projectorSlider) {
-    setProjectorState(cameFromMediaPage);
+    setProjectorState(true);
 
     projectorPull.addEventListener('click', () => {
       const isTurningOn = projectorStage.dataset.projector !== 'on';
