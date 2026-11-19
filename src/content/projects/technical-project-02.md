@@ -4,7 +4,7 @@ description: A Comparative Analysis of Two Generative Models for Cinematic Color
 date: 2025-03-28
 status: in-progress
 featured: true
-image: /photography/two.png
+image: /photography/two.webp
 imageAlt: Poster for the cinematic color-grading research project
 researchPaperUrl: /projects/color-grading/research-paper.pdf
 projectNotesUrl: /projects/color-grading/project-notes.pdf

@@ -4,7 +4,7 @@ description: Sorting users into their prospective Hogwarts house!
 date: 2024-03-22
 status: complete
 featured: true
-image: /photography/one.png
+image: /photography/one.webp
 imageAlt: Handmade voice-interactive Hogwarts Sorting Hat
 articleUrl: https://www.instructables.com/Hogwarts-Sorting-Hat-Project/
 notebookUrl: /projects/sorting-hat-engineering-notebook.pdf

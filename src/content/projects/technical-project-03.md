@@ -7,7 +7,7 @@ featured: true
 image: /photography/three.png
 imageAlt: BIRDIE badminton form-analysis logo
 appDocumentationUrl: /projects/birdie/app-documentation.pdf
-appScreenUrl: /projects/birdie/home-screen.png
+appScreenUrl: /projects/birdie/home-screen.webp
 youtubeId: SDFEYmgquDs
 ---
 

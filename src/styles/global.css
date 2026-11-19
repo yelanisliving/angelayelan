@@ -1466,7 +1466,7 @@ main:has(> .image-stills-page) {
   border: 0;
   color: var(--text);
   background-color: transparent;
-  background-image: url('/images/videos/cinema-controls-watercolor.png');
+  background-image: url('/images/videos/cinema-controls-watercolor.webp');
   background-repeat: no-repeat;
   background-size: 300% auto;
   font: inherit;
