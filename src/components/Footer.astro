@@ -105,15 +105,25 @@ const contactLinks = [
       // Private browsing or blocked storage: fall through to a fresh count.
     }
 
-    if (cached && cached.day === today) {
-      // Already counted this visitor today — just show the cached number
-      // instead of hitting the counter again on every refresh.
-      visitorCountEl.textContent = `you're the ${ordinal(cached.count)} visitor :)`;
-    } else {
-      fetch('https://abacus.jasoncameron.dev/hit/angelayelan-portfolio/site-visits-v2')
-        .then((response) => response.json())
+    const show = (count: number) => {
+      visitorCountEl.textContent = `you're the ${ordinal(count)} visitor :)`;
+    };
+
+    // Show the last known count immediately, even if it is from a previous day,
+    // so the generic placeholder only appears for a brand-new visitor.
+    if (cached && Number.isFinite(cached.count)) show(cached.count);
+
+    if (!cached || cached.day !== today) {
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 8000);
+
+      fetch('/api/visit', {
+        signal: controller.signal,
+      })
+        .then((response) => (response.ok ? response.json() : Promise.reject(new Error('counter error'))))
         .then((data) => {
-          visitorCountEl.textContent = `you're the ${ordinal(data.value)} visitor :)`;
+          if (!Number.isFinite(data?.value)) return;
+          show(data.value);
           try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify({ count: data.value, day: today }));
           } catch {
@@ -121,8 +131,9 @@ const contactLinks = [
           }
         })
         .catch(() => {
-          // Keep the generic fallback text if the counter is unreachable.
-        });
+          // Keep whatever is already showing if the counter is unreachable.
+        })
+        .finally(() => window.clearTimeout(timeout));
     }
   }
 </script>

@@ -13,6 +13,7 @@ A blog-style personal portfolio for Angela Yelan. The site has an editorial home
 - Plain, global CSS with project design tokens
 - Markdown or MDX-ready content kept separate from page templates
 - Static output by default
+- Hosted on Netlify. The footer visitor count uses one Netlify Function with [Netlify Blobs](https://docs.netlify.com/blobs/overview/) (`@netlify/blobs`); no Astro adapter is used
 - Uncompressed HTML output so generated `dist/**/index.html` files retain readable indentation
 
 ## Commands
@@ -32,6 +33,7 @@ pnpm format:html
 
 ```text
 .
+├── netlify/functions/      Netlify Function for the visitor counter (`/api/visit`)
 ├── public/                 Static files copied as-is
 ├── src/
 │   ├── components/        Reusable interface pieces
@@ -45,9 +47,14 @@ pnpm format:html
 │   └── env.d.ts           Astro type declarations
 ├── AGENTS.md               Build instructions for Codex
 ├── astro.config.mjs        Astro configuration
+├── netlify.toml            Netlify build and functions settings
 ├── package.json            Dependencies and project scripts
 └── tsconfig.json           TypeScript configuration
 ```
+
+## Visitor counter
+
+`src/components/Footer.astro` calls `/api/visit` once per visitor per day and caches the result in `localStorage`. `netlify/functions/visit.mjs` adds 1 to a number stored in Netlify Blobs and returns `{ "value": n }`. The counter only works on the deployed Netlify site; on `pnpm dev` the request fails and the footer keeps its fallback text. To reset or change the count, edit the `count` key in the `visitor-counter` store in the Netlify dashboard (Blobs).
 
 ## Routes
 
