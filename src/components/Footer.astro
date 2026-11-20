@@ -49,7 +49,7 @@ const contactLinks = [
   <p class="site-footer__updated">
     last updated {lastUpdated.toLowerCase()}.
     {' '}
-    <span data-visitor-count>you're a visitor :)</span>
+    <span data-visitor-count></span>
   </p>
   <p class="site-footer__discipline">media tech / visual computing</p>
   <nav class="site-footer__contacts" aria-label="Contact Angela">
@@ -133,7 +133,11 @@ const contactLinks = [
         .catch(() => {
           // Keep whatever is already showing if the counter is unreachable.
         })
-        .finally(() => window.clearTimeout(timeout));
+        .finally(() => {
+          window.clearTimeout(timeout);
+          // Only fall back to generic text if no count could be shown at all.
+          if (!visitorCountEl.textContent) visitorCountEl.textContent = "you're a visitor :)";
+        });
     }
   }
 </script>
