@@ -94,41 +94,53 @@ const contactLinks = [
   const visitorCountEl = document.querySelector('[data-visitor-count]');
 
   if (visitorCountEl) {
-    const STORAGE_KEY = 'angelayelan-visit-count-v2';
-    const today = new Date().toDateString();
+    // sessionStorage = "already counted in this tab" (cleared when the tab closes).
+    // localStorage = last known total, shown instantly in a new tab before the fresh count arrives.
+    const SESSION_KEY = 'angelayelan-visit-count-session';
+    const LAST_KEY = 'angelayelan-visit-count-last';
 
-    let cached: { count: number; day: string } | null = null;
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      cached = raw ? JSON.parse(raw) : null;
-    } catch {
-      // Private browsing or blocked storage: fall through to a fresh count.
-    }
+    const read = (storage: () => Storage, key: string) => {
+      try {
+        const value = Number(storage().getItem(key));
+        return Number.isFinite(value) && value > 0 ? value : null;
+      } catch {
+        // Private browsing or blocked storage.
+        return null;
+      }
+    };
+
+    const write = (storage: () => Storage, key: string, value: number) => {
+      try {
+        storage().setItem(key, String(value));
+      } catch {
+        // Ignore storage failures — the count still displays correctly this load.
+      }
+    };
 
     const show = (count: number) => {
       visitorCountEl.textContent = `you're the ${ordinal(count)} visitor :)`;
     };
 
-    // Show the last known count immediately, even if it is from a previous day,
-    // so the generic placeholder only appears for a brand-new visitor.
-    if (cached && Number.isFinite(cached.count)) show(cached.count);
+    const sessionCount = read(() => sessionStorage, SESSION_KEY);
+    const lastCount = read(() => localStorage, LAST_KEY);
 
-    if (!cached || cached.day !== today) {
+    if (sessionCount) {
+      // Already counted in this tab — page changes and refreshes don't add visits.
+      show(sessionCount);
+    } else {
+      // New tab: show the last known total right away, then count this visit.
+      if (lastCount) show(lastCount);
+
       const controller = new AbortController();
       const timeout = window.setTimeout(() => controller.abort(), 8000);
 
-      fetch('/api/visit', {
-        signal: controller.signal,
-      })
+      fetch('/api/visit', { signal: controller.signal })
         .then((response) => (response.ok ? response.json() : Promise.reject(new Error('counter error'))))
         .then((data) => {
           if (!Number.isFinite(data?.value)) return;
           show(data.value);
-          try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({ count: data.value, day: today }));
-          } catch {
-            // Ignore storage failures — the count still displayed correctly this load.
-          }
+          write(() => sessionStorage, SESSION_KEY, data.value);
+          write(() => localStorage, LAST_KEY, data.value);
         })
         .catch(() => {
           // Keep whatever is already showing if the counter is unreachable.

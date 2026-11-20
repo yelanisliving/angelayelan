@@ -54,7 +54,7 @@ pnpm format:html
 
 ## Visitor counter
 
-`src/components/Footer.astro` calls `/api/visit` once per visitor per day and caches the result in `localStorage`. `netlify/functions/visit.mjs` adds 1 to a number stored in Netlify Blobs and returns `{ "value": n }`. The counter only works on the deployed Netlify site; on `pnpm dev` the request fails and the footer keeps its fallback text. To reset or change the count, edit the `count` key in the `visitor-counter` store in the Netlify dashboard (Blobs).
+`src/components/Footer.astro` calls `/api/visit` once per browser tab session (cached in `sessionStorage`, so refreshes and page changes don't add visits, but a new tab does) and keeps the last known total in `localStorage` to show instantly. `netlify/functions/visit.mjs` adds 1 to a number stored in Netlify Blobs and returns `{ "value": n }`. The counter only works on the deployed Netlify site; on `pnpm dev` the request fails and the footer keeps its fallback text. To reset or change the count, edit the `count` key in the `visitor-counter` store in the Netlify dashboard (Blobs).
 
 ## Routes
 
