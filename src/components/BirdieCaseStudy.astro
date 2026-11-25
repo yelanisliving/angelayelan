@@ -15,11 +15,32 @@ const sections = [
   { id: 'outcome', label: 'outcome' },
 ];
 
-const systemSteps = [
-  { step: '01', title: 'Capture', detail: 'Record a player’s movement through the mobile camera.' },
-  { step: '02', title: 'Map', detail: 'Use pose landmarks and joint angles to describe badminton form.' },
-  { step: '03', title: 'Classify', detail: 'Evaluate form with computer-vision and machine-learning models.' },
-  { step: '04', title: 'Guide', detail: 'Turn model output into approachable feedback for newer players.' },
+// "View our labeling here." in the dataset note links here once a URL is added.
+const labelingUrl =
+  'https://docs.google.com/spreadsheets/d/1kunlqvag6vXkwClyrXMOl8vKZKrqTVIrXMRTmVU4lzw/edit?usp=sharing';
+
+const base = '/projects/birdie';
+const datasetPhotos = [
+  {
+    src: `${base}/build-photo-good.webp`,
+    alt: 'Player with the racket held behind the head and the other arm raised, labeled good.',
+    caption: 'Good',
+  },
+  {
+    src: `${base}/build-photo-low-arm.webp`,
+    alt: 'Player with one hand raised high and the racket held low in front of the body.',
+    caption: 'Right arm too low, racket arm not opened, right elbow angle, left arm too high',
+  },
+  {
+    src: `${base}/build-photo-left-elbow.webp`,
+    alt: 'Player with one palm raised near the chest and the racket held beside the head.',
+    caption: 'Right arm too low, racket arm not opened, right elbow angle, left elbow angle',
+  },
+  {
+    src: `${base}/build-photo-not-opened.webp`,
+    alt: 'Player holding the racket straight up with the other arm stretched out to the side.',
+    caption: 'Racket arm not opened',
+  },
 ];
 ---
 
@@ -92,7 +113,7 @@ const systemSteps = [
     </section>
 
     <section
-      class="birdie-study__panel birdie-study__panel--research"
+      class="birdie-study__panel birdie-study__panel--research birdie-study__panel--scroll"
       id="birdie-panel-research"
       role="tabpanel"
       aria-labelledby="birdie-tab-research"
@@ -166,39 +187,150 @@ const systemSteps = [
     </section>
 
     <section
-      class="birdie-study__panel birdie-study__panel--build"
+      class="birdie-study__panel birdie-study__panel--build birdie-study__panel--scroll"
       id="birdie-panel-build"
       role="tabpanel"
       aria-labelledby="birdie-tab-build"
       data-panel="build"
       hidden
     >
-      <h2>Form-detection loop</h2>
-      <ol class="birdie-study__loop">
-        {
-          systemSteps.map((item) => (
-            <li>
-              <span>{item.step}</span>
-              <strong>{item.title}</strong>
-              <p>{item.detail}</p>
-            </li>
-          ))
-        }
-      </ol>
-      <p class="birdie-study__note">
-        Pose tracking, angle calculations, building the dataset, CNN training, app integration, and
-        crashouts&nbsp;:p
-        {
-          data.appDocumentationUrl && (
-            <>
-              {' '}
-              <a href={data.appDocumentationUrl} target="_blank" rel="noreferrer">
-                Open project notes ↗
-              </a>
-            </>
-          )
-        }
-      </p>
+      <div class="birdie-study__step">
+        <h2>1. Dataset Creation</h2>
+        <p class="birdie-study__step-copy">
+          We built our own dataset of 290+ images, capturing players demonstrating different
+          racket-arm positions.<br />
+          We manually labeled each image according to its form, focusing on arm placement, elbow
+          angle, and whether an arm is “open.”
+        </p>
+        <p class="birdie-study__step-note">
+          The image dataset is not public, since it contains pictures of people’s forms other than
+          ours.
+          {
+            labelingUrl ? (
+              <a href={labelingUrl} target="_blank" rel="noreferrer">View our labeling here.</a>
+            ) : (
+              <>View our labeling here.</>
+            )
+          }
+        </p>
+
+        <div class="birdie-study__photos">
+          {
+            datasetPhotos.map((photo) => (
+              <figure>
+                <img src={photo.src} alt={photo.alt} loading="lazy" />
+                <figcaption>{photo.caption}</figcaption>
+              </figure>
+            ))
+          }
+        </div>
+
+        <div class="birdie-study__labeling">
+          <p class="birdie-study__labeling-copy">
+            We used multi-label one hot encoding when making our CSV file.<br />
+            Also, after asking checking with our coaches regarding what a “correct” form looks like,
+            we realized that some rules can be hardcoded, like the left elbow angle.
+          </p>
+          <figure>
+            <img
+              class="birdie-study__labels-img"
+              src={`${base}/build-labels.webp`}
+              alt="List of labels: good, right elbow too low (angle d), right arm not opened, left arm not opened, right elbow angle (angle c), left elbow too low (angle b) and left elbow angle (angle a), each with the method used to detect it."
+              loading="lazy"
+            />
+            <figcaption>Labels + corresponding angels</figcaption>
+          </figure>
+          <figure>
+            <img
+              class="birdie-study__annotated-img"
+              src={`${base}/build-annotated-angles.webp`}
+              alt="Stick-figure drawing of the shoulders and arms on a black background with the elbow and arm angles a, b, c and d marked in green."
+              loading="lazy"
+            />
+            <figcaption>Annotated elbow &amp; arm angles</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="birdie-study__step">
+        <h2>2. Pose Estimation &amp; Feature Extraction</h2>
+        <p class="birdie-study__step-copy">
+          Using MediaPipe Pose and OpenCV, we extracted body landmarks from each image.<br />
+          To account for differences in camera distance and player size, we normalized the detected
+          skeletons relative to shoulder width.<br />
+          We then collected joint angles and relative positions.
+        </p>
+        <div class="birdie-study__pose">
+          <figure>
+            <img
+              src={`${base}/build-angles-cd.webp`}
+              alt="Green skeleton on a black background with two measured joint angles printed beside the elbow and wrist."
+              loading="lazy"
+            />
+            <figcaption>Angles C &amp; D measurments</figcaption>
+          </figure>
+          <figure>
+            <img
+              src={`${base}/build-skeletons.webp`}
+              alt="Hundreds of colored skeletons overlaid on a black background, with a dense cluster of angle values printed on the right."
+              loading="lazy"
+            />
+            <figcaption>All normalized skeletons together</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="birdie-study__step">
+        <h2>3. Model Developement</h2>
+        <p class="birdie-study__step-copy">
+          To classify errors in elbow positioning, we implemented logistic regression using joint
+          angles calculated from MediaPipe landmarks.<br />
+          For Angle D (elbow height), we trained a binary classifier to distinguish between
+          acceptable, low, and high elbow positions.<br />
+          For Angle C (elbow bend), we incorporated a quadratic feature to identify angles that were
+          either too small or too large.
+        </p>
+        <figure class="birdie-study__plot">
+          <img
+            src={`${base}/build-angle-d-plot.webp`}
+            alt="Plot titled Angle D classify elbow too low: red and blue points by angle in degrees, a blue sigmoid curve falling through a dashed cutoff near minus 40 degrees."
+            loading="lazy"
+          />
+          <figcaption>
+            Logistic regression decision boundary for detecting low elbow positioning. Cutoff is
+            approxiamately -39.9 degrees.
+          </figcaption>
+        </figure>
+        <figure class="birdie-study__plot">
+          <img
+            src={`${base}/build-quadratic-plot.webp`}
+            alt="Plot titled Quadratic Sigmoid Decision Boundary: a green curve that is high below 38 degrees, low between 38 and 98 degrees, and high above 98 degrees, with two dashed boundary lines."
+            loading="lazy"
+          />
+          <figcaption>
+            Quadratic logistic regression for identifying excessively small or large elbow angles.
+            Between 38.0 and 98.1 degrees is considered acceptable.
+          </figcaption>
+        </figure>
+        <p class="birdie-study__step-copy birdie-study__step-copy--cnn">
+          While logistic regression allowed us to classify specific errors using numerical
+          joint-angle measurements, identifying whether the racket arm was open or closed proved to
+          be more challenging.<br />
+          We therefore developed a convolutional neural network (CNN) in PyTorch to learn visual
+          patterns directly from images.
+        </p>
+        <figure class="birdie-study__cnn">
+          <img
+            src={`${base}/build-cnn.webp`}
+            alt="Diagram of the CNN: a 3 by 224 by 224 input image passes through three convolution, ReLU and pooling blocks, then flatten, a 256-unit fully connected layer and a sigmoid, giving a probability between 0 and 1 that the arm is opened."
+            loading="lazy"
+          />
+          <figcaption>
+            Three convolutional blocks extract visual features from 224 x 224 RGB images, followed by
+            fully connected layers that predicted whether the racket arm is open or closed.
+          </figcaption>
+        </figure>
+      </div>
     </section>
 
     <section

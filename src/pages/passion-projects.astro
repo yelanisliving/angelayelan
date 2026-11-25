@@ -50,7 +50,7 @@ const projectImageOverrides: Record<string, { src: string; alt: string }> = {
                   <img
                     src={image?.src ?? project.data.image}
                     alt={image?.alt ?? project.data.imageAlt ?? ''}
-                    loading={index === 0 ? 'eager' : 'lazy'}
+                    loading={index < 3 ? 'eager' : 'lazy'}
                   />
                 ) : (
                   <span>Project image</span>
