@@ -7,7 +7,9 @@ const preparedVideos = videos.map((video) => ({
   embedId: getYouTubeId(video.youtubeId),
 }));
 
-const firstVideo = preparedVideos[0];
+// The page opens on the newest video.
+const startIndex = preparedVideos.length - 1;
+const firstVideo = preparedVideos[startIndex];
 const clientVideos = preparedVideos.map(({ title, note, embedId }) => ({
   title,
   note,
@@ -77,37 +79,26 @@ const getVideoPreview = (embedId: string) => `
 
       <div class="cinema-controls" aria-label="Video controls">
         <button class="cinema-control cinema-control--previous" type="button" aria-label="Previous video" data-cinema-previous></button>
-        <button
-          class="cinema-control cinema-control--details"
-          type="button"
-          aria-label="Show video description"
-          aria-expanded="false"
-          aria-controls="cinema-description"
-          data-cinema-details
-        >
-        </button>
+        <div class="cinema-description" id="cinema-description" aria-live="polite">
+          <p data-cinema-note>{firstVideo.note}</p>
+        </div>
         <button class="cinema-control cinema-control--next" type="button" aria-label="Next video" data-cinema-next></button>
       </div>
 
-      <figcaption class="cinema-description" id="cinema-description" hidden data-cinema-description>
-        <p data-cinema-note>{firstVideo.note}</p>
-      </figcaption>
     </figure>
   </section>
 
 </BaseLayout>
 
-<script is:inline define:vars={{ clientVideos }}>
+<script is:inline define:vars={{ clientVideos, startIndex }}>
   const carousel = document.querySelector('[data-cinema-carousel]');
 
   if (carousel) {
     const frame = carousel.querySelector('[data-cinema-video]');
     const previous = carousel.querySelector('[data-cinema-previous]');
     const next = carousel.querySelector('[data-cinema-next]');
-    const details = carousel.querySelector('[data-cinema-details]');
-    const description = carousel.querySelector('[data-cinema-description]');
     const note = carousel.querySelector('[data-cinema-note]');
-    let activeIndex = 0;
+    let activeIndex = startIndex;
 
     const preview = (embedId) => `
       <style>
@@ -185,12 +176,6 @@ const getVideoPreview = (embedId: string) => `
 
     previous?.addEventListener('click', () => swapTo(activeIndex - 1, 'previous'));
     next?.addEventListener('click', () => swapTo(activeIndex + 1, 'next'));
-    details?.addEventListener('click', () => {
-      const willShow = description.hidden;
-      description.hidden = !willShow;
-      details.setAttribute('aria-expanded', String(willShow));
-      details.setAttribute('aria-label', willShow ? 'Hide video description' : 'Show video description');
-    });
 
     carousel.addEventListener('keydown', (event) => {
       if (event.key === 'ArrowLeft') {

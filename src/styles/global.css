@@ -1078,6 +1078,16 @@ h2 {
   min-height: 100svh;
 }
 
+/* The footer is absolutely positioned over the page bottom; let clicks reach
+   the video controls beneath it while keeping its own links clickable. */
+.site-shell:has(.cinema-page) .site-footer {
+  pointer-events: none;
+}
+
+.site-shell:has(.cinema-page) .site-footer a {
+  pointer-events: auto;
+}
+
 main:has(> .cinema-page) {
   display: grid;
   min-width: 0;
@@ -1451,17 +1461,17 @@ main:has(> .image-stills-page) {
 
 .cinema-controls {
   display: grid;
-  width: min(100%, 15rem);
-  height: 3.85rem;
-  margin: -0.15rem auto 0;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.25rem;
-  align-items: stretch;
+  width: min(100%, 34rem);
+  margin: 0.1rem auto 0;
+  grid-template-columns: 3.5rem minmax(0, 1fr) 3.5rem;
+  gap: 1rem;
+  align-items: center;
 }
 
 .cinema-control {
-  --control-scale: 1;
+  --control-scale: 0.8;
   position: relative;
+  height: 2.7rem;
   display: grid;
   min-width: 0;
   padding: 0;
@@ -1482,46 +1492,21 @@ main:has(> .image-stills-page) {
   background-position: left center;
 }
 
-.cinema-control--details {
-  --control-scale: 1.15;
-  background-position: center center;
-}
-
 .cinema-control--next {
   --control-scale: 0.8;
   background-position: right center;
-}
-
-.cinema-control:hover,
-.cinema-control:focus-visible {
-  filter: saturate(1.08) drop-shadow(0 0.25rem 0.4rem rgb(32 32 34 / 10%));
-  transform: translateY(-0.18rem) scale(calc(var(--control-scale) * 1.04));
 }
 
 .cinema-control:active {
   transform: translateY(0.05rem) scale(calc(var(--control-scale) * 0.98));
 }
 
-.cinema-control--details span {
-  max-width: 2.5rem;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 0.62rem;
-  line-height: 1.05;
-  text-align: center;
-}
-
 .cinema-description {
-  display: grid;
-  width: min(100%, 31rem);
   min-height: 4.25rem;
-  margin: 0.35rem auto 0;
-  gap: 0.25rem;
+  margin: 0;
+  display: grid;
   place-items: center;
   text-align: center;
-}
-
-.cinema-description[hidden] {
-  display: none;
 }
 
 .cinema-description p {
@@ -4214,12 +4199,8 @@ main:has(> .birdie-study) {
   }
 
   .cinema-controls {
-    width: min(60vw, 13rem);
-    height: 3.35rem;
-  }
-
-  .cinema-control--details span {
-    font-size: 0.56rem;
+    grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem;
+    gap: 0.5rem;
   }
 
   .photo-grid {

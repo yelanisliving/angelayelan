@@ -68,6 +68,11 @@ export const videos = [
     note: 'a bittersweet video for the graduating seniors in my badminton club :)',
     youtubeId: 'https://youtu.be/MGEcUETFtkI?si=flhXlXTl0iEFV1eA',
   },
+  {
+    title: 'Video 14',
+    note: 'a promise & love to san francisco',
+    youtubeId: 'https://youtu.be/-iKIwxtDRzs',
+  },
 ];
 
 export const photos = [
