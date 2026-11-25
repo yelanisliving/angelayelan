@@ -6,6 +6,15 @@ interface Props {
 }
 
 const { data } = Astro.props;
+
+const sections = [
+  { id: 'overview', label: 'overview' },
+  { id: 'research', label: 'research' },
+  { id: 'build', label: 'build' },
+  { id: 'testing', label: 'testing' },
+  { id: 'outcome', label: 'outcome' },
+];
+
 const systemSteps = [
   { step: '01', title: 'Capture', detail: 'Record a player’s movement through the mobile camera.' },
   { step: '02', title: 'Map', detail: 'Use pose landmarks and joint angles to describe badminton form.' },
@@ -14,93 +23,253 @@ const systemSteps = [
 ];
 ---
 
-<article class="birdie-study">
-  <header class="birdie-study__hero">
-    <h1>{data.title}</h1>
-    <p class="birdie-study__lede">{data.description}</p>
-  </header>
+<article class="birdie-study" data-birdie-study>
+  <div class="birdie-study__bar">
+    <a class="birdie-study__back" href="/passion-projects">
+      <span aria-hidden="true">←</span> back
+    </a>
+    <nav class="birdie-study__tabs" role="tablist" aria-label="BIRDIE case study sections">
+      {
+        sections.map((section, index) => (
+          <>
+            <button
+              class="birdie-study__tab"
+              type="button"
+              role="tab"
+              id={`birdie-tab-${section.id}`}
+              aria-controls={`birdie-panel-${section.id}`}
+              aria-selected={index === 0 ? 'true' : 'false'}
+              tabindex={index === 0 ? 0 : -1}
+              data-tab={section.id}
+            >
+              {section.label}
+            </button>
+            {index < sections.length - 1 && (
+              <span class="birdie-study__tab-separator" aria-hidden="true">·</span>
+            )}
+          </>
+        ))
+      }
+    </nav>
+  </div>
 
-  <section class="birdie-study__showcase" aria-label="BIRDIE mobile app home screen">
-    <div class="birdie-study__showcase-copy">
-      <span>Current prototype</span>
-      <strong>Form analysis designed for beginners!</strong>
-      <p>
-        BIRDIE helps players review their stance when practicing their badminton form.
+  <h1>{data.title}</h1>
+
+  <div class="birdie-study__panels">
+    <section
+      class="birdie-study__panel birdie-study__panel--overview"
+      id="birdie-panel-overview"
+      role="tabpanel"
+      aria-labelledby="birdie-tab-overview"
+      data-panel="overview"
+    >
+      <div class="birdie-study__overview-copy">
+        <h2>Form analysis designed for beginners!</h2>
+        <p>
+          BIRDIE is a mobile coaching tool that uses computer vision and machine learning to help
+          beginner badminton players understand and improve their form.
+        </p>
+        <p>
+          Built with my badminton teammate, the system detects body landmarks in real time and
+          measures important arm and elbow positions.
+        </p>
+        <p>
+          We created and labeled our own badminton-form dataset, experimented with angle-based
+          evaluation and image classification, and integrated the system into a React Native mobile
+          experience.
+        </p>
+        <p class="birdie-study__tags">
+          computer vision | machine learning | dataset creation | mobile integration | UI design
+        </p>
+      </div>
+      {
+        data.appScreenUrl && (
+          <figure class="birdie-study__screen">
+            <img src={data.appScreenUrl} alt="BIRDIE badminton form-analysis app home screen" />
+          </figure>
+        )
+      }
+    </section>
+
+    <section
+      class="birdie-study__panel birdie-study__panel--research"
+      id="birdie-panel-research"
+      role="tabpanel"
+      aria-labelledby="birdie-tab-research"
+      data-panel="research"
+      hidden
+    >
+      <p class="birdie-study__research-lede">
+        While coaches can identify mistakes in person, we explored whether computer vision could
+        make form feedback more accessible during independent practices.
       </p>
-    </div>
-    {data.appScreenUrl ? (
-      <figure>
-        <img src={data.appScreenUrl} alt="BIRDIE badminton form-analysis app home screen" />
-      </figure>
-    ) : (
-      <div class="birdie-study__screen-placeholder">App screen</div>
-    )}
-  </section>
-
-  <section class="birdie-study__story" aria-labelledby="birdie-story">
-    <p class="eyebrow">The project</p>
-    <div class="birdie-study__prose" id="birdie-story">
-      <slot />
-    </div>
-  </section>
-
-  <section class="birdie-study__system" aria-labelledby="birdie-system">
-    <div class="birdie-study__section-heading">
-      <h2 id="birdie-system">Form-detection Loop</h2>
-    </div>
-    <ol>
-      {systemSteps.map((item) => (
-        <li>
-          <span>{item.step}</span>
-          <strong>{item.title}</strong>
-          <p>{item.detail}</p>
-        </li>
-      ))}
-    </ol>
-  </section>
-
-  <section class="birdie-study__documentation" aria-labelledby="birdie-documentation">
-    <div class="birdie-study__section-heading">
-      <p class="eyebrow">Development archive</p>
-      <h2 id="birdie-documentation">Project Notes</h2>
-      <p class="birdie-study__archive-note">
-        Pose tracking, angle calculations, building the dataset, CNN training, app integration, and crashouts&nbsp;:p
+      <p class="birdie-study__research-wide">
+        We began researching existing applications of CV in badminton, from shot refinement
+        algorithms to shuttlecock tracking / trajectory prediction.
       </p>
-    </div>
 
-    {data.appDocumentationUrl ? (
-      <div class="birdie-study__document">
-        <iframe
-          src={`${data.appDocumentationUrl}#view=FitH&toolbar=1`}
-          title="BIRDIE app research and development documentation"
+      <div class="birdie-study__figures">
+        <figure class="birdie-study__figure">
+          <img
+            src="/projects/birdie/research-pipeline.webp"
+            alt="Diagram of a shuttlecock trajectory prediction pipeline: past video frames pass through TrackNet, Faster R-CNN and HRNet, then an LSTM predicts future frames."
+            loading="lazy"
+          />
+          <figcaption>
+            Shuttlecock trajectory prediction pipeline.<br />
+            Source: Nokihara et al. (2023),
+            <a href="https://www.mdpi.com/2313-433X/9/5/99" target="_blank" rel="noreferrer">
+              Future Prediction of Shuttlecock Trajectory in Badminton Using Player’s Information
+            </a>
+          </figcaption>
+        </figure>
+
+        <figure class="birdie-study__figure">
+          <img
+            src="/projects/birdie/research-mediapipe.webp"
+            alt="MediaPipe Pose landmarks for the shoulders, arms and hips, shown as numbered points joined by green and blue lines."
+            loading="lazy"
+          />
+          <figcaption>
+            MediaPipe Pose landmark connections.<br />
+            Based on
+            <a
+              href="https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Google Mediapipe Pose documentation
+            </a>
+          </figcaption>
+        </figure>
+      </div>
+
+      <figure class="birdie-study__figure birdie-study__figure--side">
+        <figcaption>
+          Annotated trajectories during a badminton rally for shot refinement training.<br />
+          Source: Hsu et al. (2024),
+          <a href="https://www.mdpi.com/1424-8220/24/13/4372" target="_blank" rel="noreferrer">
+            Sensors, 24(13), Article 4372
+          </a>
+        </figcaption>
+        <img
+          src="/projects/birdie/research-trajectories.webp"
+          alt="Badminton rally on a court with colored lines tracing the paths of several shuttlecock trajectories."
           loading="lazy"
-        ></iframe>
-        <a href={data.appDocumentationUrl} target="_blank" rel="noreferrer">Open full documentation ↗</a>
-      </div>
-    ) : (
-      <div class="birdie-study__document-placeholder">App documentation PDF</div>
-    )}
-  </section>
+        />
+      </figure>
 
-  <section class="birdie-study__demo" aria-labelledby="birdie-demo">
-    <div class="birdie-study__section-heading">
-      <p class="eyebrow" id="birdie-demo">Prototype demo</p>
-    </div>
-    {data.youtubeId ? (
-      <iframe
-        src={`https://www.youtube-nocookie.com/embed/${data.youtubeId}`}
-        title="BIRDIE badminton form-analysis demonstration"
-        loading="lazy"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen
-      ></iframe>
-    ) : (
-      <div class="birdie-study__demo-placeholder">
-        <span>YouTube demo</span>
-        <p>Add the video ID to this project’s Markdown frontmatter to place the demo here.</p>
-      </div>
-    )}
-  </section>
+      <p class="birdie-study__research-wide">
+        We narrowed our focus to real-time pose estimation with a live camera, as many of the
+        projects in the papers we read all relied on immense amounts of video data and training.
+      </p>
+    </section>
 
-  <a class="text-link" href="/passion-projects">← Back to featured projects</a>
+    <section
+      class="birdie-study__panel birdie-study__panel--build"
+      id="birdie-panel-build"
+      role="tabpanel"
+      aria-labelledby="birdie-tab-build"
+      data-panel="build"
+      hidden
+    >
+      <h2>Form-detection loop</h2>
+      <ol class="birdie-study__loop">
+        {
+          systemSteps.map((item) => (
+            <li>
+              <span>{item.step}</span>
+              <strong>{item.title}</strong>
+              <p>{item.detail}</p>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="birdie-study__note">
+        Pose tracking, angle calculations, building the dataset, CNN training, app integration, and
+        crashouts&nbsp;:p
+        {
+          data.appDocumentationUrl && (
+            <>
+              {' '}
+              <a href={data.appDocumentationUrl} target="_blank" rel="noreferrer">
+                Open project notes ↗
+              </a>
+            </>
+          )
+        }
+      </p>
+    </section>
+
+    <section
+      class="birdie-study__panel birdie-study__panel--testing"
+      id="birdie-panel-testing"
+      role="tabpanel"
+      aria-labelledby="birdie-tab-testing"
+      data-panel="testing"
+      hidden
+    >
+      <p class="birdie-study__empty">testing notes coming soon.</p>
+    </section>
+
+    <section
+      class="birdie-study__panel birdie-study__panel--outcome"
+      id="birdie-panel-outcome"
+      role="tabpanel"
+      aria-labelledby="birdie-tab-outcome"
+      data-panel="outcome"
+      hidden
+    >
+      {
+        data.youtubeId ? (
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${data.youtubeId}`}
+            title="BIRDIE badminton form-analysis demonstration"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          />
+        ) : (
+          <p class="birdie-study__empty">prototype demo coming soon.</p>
+        )
+      }
+    </section>
+  </div>
 </article>
+
+<script>
+  const study = document.querySelector<HTMLElement>('[data-birdie-study]');
+
+  if (study) {
+    const tabs = Array.from(study.querySelectorAll<HTMLButtonElement>('[data-tab]'));
+    const panels = Array.from(study.querySelectorAll<HTMLElement>('[data-panel]'));
+
+    const select = (id: string, moveFocus = false) => {
+      tabs.forEach((tab) => {
+        const active = tab.dataset.tab === id;
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+        if (active && moveFocus) tab.focus();
+      });
+      panels.forEach((panel) => {
+        panel.hidden = panel.dataset.panel !== id;
+      });
+      history.replaceState(null, '', id === 'overview' ? location.pathname : `#${id}`);
+      window.scrollTo(0, 0);
+    };
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => select(tab.dataset.tab ?? 'overview'));
+      tab.addEventListener('keydown', (event) => {
+        const offset = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+        if (!offset) return;
+        event.preventDefault();
+        const next = tabs[(index + offset + tabs.length) % tabs.length];
+        select(next.dataset.tab ?? 'overview', true);
+      });
+    });
+
+    const initial = location.hash.slice(1);
+    if (tabs.some((tab) => tab.dataset.tab === initial)) select(initial);
+  }
+</script>
