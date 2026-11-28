@@ -1,5 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+// Listed by the optional `order` field (1 = first); otherwise newest first.
+const essays = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) =>
+    (a.data.order ?? Infinity) - (b.data.order ?? Infinity) ||
+    b.data.publishedAt.getTime() - a.data.publishedAt.getTime(),
+);
+
+const formatDate = (date: Date) =>
+  date
+    .toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' })
+    .toLowerCase();
 ---
 
 <BaseLayout
@@ -14,6 +27,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <h1 id="writing-page-title">writing</h1>
     </header>
 
-    <p class="cinema-page__subtitle">coming soon!</p>
+    <ul class="writing-list">
+      {
+        essays.map((essay) => (
+          <li>
+            <span class="writing-list__mark" aria-hidden="true">~</span>
+            <a href={`/writing/${essay.id.replace(/\.md$/, '')}`}>
+              {essay.data.title}{' '}
+              <em>({formatDate(essay.data.publishedAt)})</em>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
   </section>
 </BaseLayout>

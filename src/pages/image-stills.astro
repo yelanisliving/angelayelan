@@ -49,6 +49,9 @@ const stillSets = [
   <section class="image-stills-page" data-image-stills aria-labelledby="image-stills-page-title">
     <div class="image-stills-stage">
       <header class="image-stills-heading">
+        <a class="image-stills-back" href="/exhibit">
+          <span aria-hidden="true">←</span> back
+        </a>
         <h1 id="image-stills-page-title">image stills</h1>
         <button
           class="camera-trigger"
@@ -82,7 +85,7 @@ const stillSets = [
                     data-cursor="interactive"
                     aria-label={`View a larger version of ${photo.alt}`}
                   >
-                    <img src={photo.src} alt={photo.alt} loading={setIndex === 0 ? 'eager' : 'lazy'} />
+                    <img src={photo.src} alt={photo.alt} loading="eager" />
                   </button>
                 ) : (
                   <div class="image-stills-placeholder" role="img" aria-label={`Placeholder for ${photo.alt}`}>
@@ -124,14 +127,42 @@ const stillSets = [
     let activeIndex = 0;
     let isChanging = false;
 
+    let fadeToken = 0;
+
+    const waitForImages = (set: HTMLElement) =>
+      Promise.race([
+        Promise.all(
+          Array.from(set.querySelectorAll<HTMLImageElement>('img')).map((img) =>
+            img.decode().catch(() => undefined),
+          ),
+        ),
+        new Promise((resolve) => window.setTimeout(resolve, 1500)),
+      ]);
+
+    // The next collection stays invisible until its photos are decoded, then
+    // fades in slowly so nothing pops or loads in piece by piece.
     const showNextSet = () => {
+      const token = ++fadeToken;
       sets[activeIndex]?.setAttribute('hidden', '');
       activeIndex = (activeIndex + 1) % sets.length;
-      sets[activeIndex]?.removeAttribute('hidden');
+      const set = sets[activeIndex];
+      const photos = set?.querySelector<HTMLElement>('.image-stills-set__photos');
+      set?.removeAttribute('hidden');
 
       if (status) {
         status.textContent = `Showing photo collection ${activeIndex + 1} of ${sets.length}.`;
       }
+
+      if (!set || !photos || prefersReducedMotion) return;
+
+      photos.classList.remove('is-fading-in');
+      photos.style.opacity = '0';
+
+      waitForImages(set).then(() => {
+        if (token !== fadeToken) return;
+        photos.style.opacity = '';
+        photos.classList.add('is-fading-in');
+      });
     };
 
     trigger?.addEventListener('click', () => {
